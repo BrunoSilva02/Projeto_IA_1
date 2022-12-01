@@ -1,0 +1,26 @@
+comandos a fazer
+
+sudo apt update
+sudo apt-get install sbcl
+sudo apt install clisp
+
+
+comandos no ubuntu:
+
+make run -> correr ficheiro que está no makefile [podemos por mais cenas lá]
+clisp [filename] -> correr o ficheiro sem o sbcl (basicamente o intrepetador de lisp)
+
+comandos no sbcl:
+
+qualque comando de lisp pode ser feito a partir daqui
+(exit) ou ctrl+z -> sair
+(trace func_name) -> para fazer trace da função
+(untrace func_name) -> parar de fazer trace da função
+
+
+"os ficheiros podem ser .lisp ou .lsp"
+
+extras:
+
+dá para fazer ctrl+c e ctrl+v
+NÃO DÁ PARA USAR AS SETAS ;.;
