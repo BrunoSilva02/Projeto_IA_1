@@ -43,3 +43,47 @@
 	(substituir lista-arcos lista 
 			(substituir posicao (nth (- lista-arcos 1) lista) X))
 )
+
+(defun arco-horizontal (lista-arcos posicao tabuleiro &optional (X 1))
+
+	(if (or 
+			(> lista-arcos (length (car tabuleiro))) 
+			(> posicao (length (car tabuleiro)))
+		)
+		nil
+
+		(let ((lista (arco-na-posicao lista-arcos posicao (get-arcos-horizontais tabuleiro) X)))
+
+			(if (equal lista (get-arcos-horizontais tabuleiro))
+				nil
+				(cons 
+					lista 
+					(get-arcos-verticais tabuleiro)
+				)
+			)
+		)
+	)
+
+)
+
+(defun arco-vertical (lista-arcos posicao tabuleiro &optional (X 1))
+
+	(if (or 
+			(> lista-arcos (length (car tabuleiro))) 
+			(> posicao (length (car tabuleiro)))
+		)
+		nil
+
+		(let ((lista (arco-na-posicao lista-arcos posicao (get-arcos-verticais tabuleiro) X)))
+
+			(if (equal lista (get-arcos-verticais tabuleiro))
+				nil
+				(cons 
+					(get-arcos-horizontais tabuleiro)
+					lista 
+				)
+			)
+		)
+	)
+
+)
