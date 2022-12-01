@@ -28,5 +28,5 @@
 
 (defun get-arco-na-posicao (horizontal vertical lista)
 	"Devolve o arco existente no tabuleiro na lista de arcos horizontais ou verticais"
-		 (nth 2 lista)
+		(nth (- vertical 1) (nth (- horizontal 1) lista))
 )
