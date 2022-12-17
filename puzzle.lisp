@@ -22,7 +22,7 @@
 )
 
 (defun tabuleiro-problema-b ()
-  "Retorna um tabuleiro 3x3 (3 arcos na vertical por 3 arcos na horizontal)"
+  "Retorna um tabuleiro 4x4 (4 arcos na vertical por 4 arcos na horizontal)"
 	'(
 		((0 0 1 0) (1 1 1 1) (0 0 1 1) (0 0 1 1) (0 0 1 1))
 		((0 0 1 1) (0 0 1 1) (1 1 1 1) (1 0 1 1) (0 1 1 1))

@@ -24,6 +24,25 @@
     )
 )
 
+;; procura na profundidade
+;; teste: (dfs (no-teste) 'no-solucaop 'sucessores (operadores) 10)
+;; resultado: ((3 1) 1 ((2 2) 0 NIL))
+(defun dfs(no funObj funSuss operadores maxProf &optional abertos fechados)
+   (cond
+       ((and(null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
+       ((funcall funObj no) no)
+       ((null abertos)NIL)
+       (T
+          (let ((next-nos  (no-unicos (funcall funSuss (car abertos) operadores 'dfs maxProf) fechados)))
+              (cond 
+                   ((no-obj next-nos funObj) (no-obj next-nos funObj))
+                   (T (dfs no funObj funSuss operadores maxProf (abertos-dfs (cdr abertos) next-nos) (append fechados (list (car abertos)))))
+               )
+          )
+        )
+    )
+)
+
 (defun novo-sucessor(no func)
   (cond
        ((equal (funcall func (no-estado no)) (no-estado no))   NIL)
@@ -83,3 +102,58 @@
       (T (no-obj (cdr list)funObj))
    )
 )
+
+;;*********************************** variaveis de teste e operadores ********************************************************************
+
+(defun no-teste ()
+"Define um no teste do problema"
+ (cria-no (tabuleiro-teste)))
+
+(defun operadores ()
+ "Cria uma lista com todos os operadores do problema."
+ (list 'arco-vertical 'arco-horizontal))
+
+;;; Construtor
+(defun cria-no (tabuleiro &optional (g 0) (h 30) (pai nil))
+  (list tabuleiro g h pai)
+)
+
+;;; Metodos seletores
+;; no-estado
+;; teste: (no-estado (no-teste))
+;; resultado: (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1)))
+(defun no-estado (no)
+  (car no)
+)
+
+
+;; no-profundidade
+;; teste: (no-profundidade (no-teste))
+;; resultado: 0
+(defun no-profundidade (no)
+  (cadr no)
+)
+
+;; no-heuristica
+;; teste: (no-heuristica (no-teste))
+;; resultado: 30
+(defun no-heuristica (no)
+  (caddr no)
+)
+
+;; no-pai
+;; teste: (no-pai (no-teste))
+;; resultado: NIL
+(defun no-pai (no)
+  (cdddr no)
+)
+
+;;; Funcoes auxiliares da procura
+;;; predicado no-solucaop que verifica se um estado e final
+;; teste: (no-solucaop (no-teste))
+;; resultado: NIL
+(defun no-solucaop (no)
+  (cond ((= (no-heuristica no) 0) T)
+   (t NIL))
+)
+
