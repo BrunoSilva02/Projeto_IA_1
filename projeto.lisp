@@ -53,17 +53,5 @@
     (let ((resposta (read)))
       (cond ((= resposta 1) 'bfs)
             (T 'dfs)))
-  )
-)
-
-
-(defun le_linhas_ficheiro (ficheiro)
-  (with-open-file (stream ficheiro :direction :input)
-    (do ((linha (read-line stream nil)
-      (read-line stream nil)))
-      ((not linha))
-      (format t "~a ~%" linha)
     )
   )
-  t
-)
