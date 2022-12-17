@@ -41,7 +41,6 @@
 	(second tabuleiro)
 )
 
-
 (defun get-arco-na-posicao (lista-arcos posicao lista)
 	"Devolve o arco existente no tabuleiro na lista de arcos horizontais ou verticais"
 		(nth (- posicao 1) (nth (- lista-arcos 1) lista))
@@ -102,3 +101,24 @@
 		)
 	)
 )
+
+;;(contar-caixas-fechadas (tabuleiro-problema-a))
+(defun contar-caixas-fechadas (tabuleiro &optional (l 1) (i 1))
+	(cond ((< (list-length (get-arcos-verticais tabuleiro)) i) 0)
+		((< (list-length (get-arcos-horizontais tabuleiro)) l) 0)
+		((and(and
+			(= (get-arco-na-posicao l i (get-arcos-verticais tabuleiro)) 1) 
+			(= (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro)) 1))
+		(and (cond (((< (list-length (get-arcos-verticais tabuleiro)) l) nil)
+				((< (list-length (get-arcos-horizontais tabuleiro)) i) nil)
+			(= (get-arco-na-posicao i l (get-arcos-horizontais tabuleiro)) 1)
+			(= (get-arco-na-posicao (+ i 1) l (get-arcos-horizontais tabuleiro) 1))
+			)
+			)
+		)
+		)
+				(+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 1))
+		(t (+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1))0)))
+)
+
+
