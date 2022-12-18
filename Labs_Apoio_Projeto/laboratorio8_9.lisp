@@ -74,8 +74,8 @@ A fun��o verifica que os valores lidos pertencem ao intervale esperado para 
  (list 'vazar-a 'vazar-b 'encher-a 'encher-b 'transferir-a-b 'transferir-b-a))
 
 ;;; Construtor
-(defun cria-no (vasilhas h &optional (g 0) (pai nil))
-  (list vasilhas h g pai)
+(defun cria-no (vasilhas &optional (g 0) h (pai nil))
+  (list vasilhas g h pai)
 )
 
 
