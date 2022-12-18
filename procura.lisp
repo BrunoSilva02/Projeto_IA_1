@@ -114,7 +114,7 @@
  (list 'arco-vertical 'arco-horizontal))
 
 ;;; Construtor
-(defun cria-no (tabuleiro &optional (g 0) (h 30) (pai nil))
+(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil))
   (list tabuleiro g h pai)
 )
 
@@ -136,7 +136,7 @@
 
 ;; no-heuristica
 ;; teste: (no-heuristica (no-teste))
-;; resultado: 30
+;; resultado: 999
 (defun no-heuristica (no)
   (caddr no)
 )

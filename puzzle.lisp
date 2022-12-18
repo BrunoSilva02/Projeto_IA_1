@@ -148,3 +148,17 @@
 		(t (contar-caixas-fechadas tabuleiro l (+ i 1)))
 	)
 )
+
+;;cria-no (tabuleiro &optional (g 0) (h 0) (pai nil))
+(defun iniciar ()
+  (let* ((no (cria-no (tabuleiro-problema-a)))
+         (algoritmo (ler-algoritmo))
+         (profundidade (cond ((eql algoritmo 'dfs) (ler-profundidade)) (T 9999))) )
+	(cond
+		((equal algoritmo 'bfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores))))
+		((equal algoritmo 'dfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores) profundidade)))
+	)
+  )
+)
+
+
