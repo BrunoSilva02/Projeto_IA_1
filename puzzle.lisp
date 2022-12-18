@@ -99,24 +99,52 @@
 		)
 	)
 )
-
-;;(contar-caixas-fechadas (tabuleiro-problema-a))
+;;(trace contar-caixas-fechadas)
+;;(contar-caixas-fechadas (tabuleiro-problema-a)) 
+#|
 (defun contar-caixas-fechadas (tabuleiro &optional (l 1) (i 1))
-	(cond ((< (list-length (get-arcos-verticais tabuleiro)) i) 0)
+	(cond ((< (list-length (car (get-arcos-horizontais tabuleiro))) i) 0)
 		((< (list-length (get-arcos-horizontais tabuleiro)) l) 0)
-		((and(and
-			(= (get-arco-na-posicao l i (get-arcos-verticais tabuleiro)) 1) 
-			(= (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro)) 1))
-		(and (cond (((< (list-length (get-arcos-verticais tabuleiro)) l) nil)
-				((< (list-length (get-arcos-horizontais tabuleiro)) i) nil)
-			(= (get-arco-na-posicao i l (get-arcos-horizontais tabuleiro)) 1)
-			(= (get-arco-na-posicao (+ i 1) l (get-arcos-horizontais tabuleiro) 1))
+		((and
+			(and
+				(not (null (get-arco-na-posicao l i (get-arcos-verticais tabuleiro))))
+				(not (null (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro))))
+				(and 
+					(eq (get-arco-na-posicao l i (get-arcos-verticais tabuleiro)) '1)
+					(eq (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro)) '1)
+				)
 			)
+			(cond ((< (list-length (car (get-arcos-horizontais tabuleiro))) l) 0)
+				((< (list-length (get-arcos-horizontais tabuleiro)) i) 0)
+				((and
+					(not (null (get-arco-na-posicao l i (get-arcos-verticais tabuleiro))))
+					(not (null (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro))))
+					(and 
+						(eq (get-arco-na-posicao i l (get-arcos-horizontais tabuleiro)) '1)
+						(eq (get-arco-na-posicao (+ i 1) l (get-arcos-horizontais tabuleiro)) '1)
+					)
+				)
+				)
 			)
 		)
-		)
-				(+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 1))
-		(t (+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1))0)))
+		(+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 1))
+		(t (+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 0))
+	)
 )
+|#
 
-
+;;(trace contar-caixas-fechadas)
+;;(contar-caixas-fechadas (tabuleiro-problema-a)) 
+(defun contar-caixas-fechadas (tabuleiro &optional (l 1) (i 1))
+	(cond
+		((<= (length (get-arcos-horizontais tabuleiro)) l) 0)
+		((<= (length (get-arcos-verticais tabuleiro)) i) (contar-caixas-fechadas tabuleiro (+ l 1) 1))
+		((and (eq (get-arco-na-posicao l i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ l 1) i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao i l (get-arcos-verticais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ i 1) l (get-arcos-verticais tabuleiro)) '1)
+		) (+ (contar-caixas-fechadas tabuleiro l (+ i 1)) 1)
+		)
+		(t (contar-caixas-fechadas tabuleiro l (+ i 1)))
+	)
+)
