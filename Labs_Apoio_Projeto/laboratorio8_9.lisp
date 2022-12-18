@@ -65,7 +65,7 @@ A fun��o verifica que os valores lidos pertencem ao intervale esperado para 
 
 ;;; Problema das vasilhas
 ;;; variaveis de teste e operadores
-(defun no-teste ()
+(defun no-teste-lab8 ()
 "Define um no teste do problema da vasilhas em que A=2, B=2, profundidade=0, h=1 e pai=NIL"
  (list '(2 2) 0 1 nil))
 
@@ -214,7 +214,7 @@ A fun��o verifica que os valores lidos pertencem ao intervale esperado para 
 ;; resultado: ((0 4) 1 ((2 2) 0 NIL))
 ;; teste: (novo-sucessor (cria-no '(3 5)) 'encher-a)
 ;; resultado: NIL
-(defun sucessores(no funcs alg &optional maxProf)
+(defun sucessores(no funcs alg &optional maxProf) ;;---------------------------------------------TODO
   (cond
      ((and (equal alg 'dfs)(equal (no-profundidade no) maxProf)) NIL)
      (T 
@@ -223,20 +223,38 @@ A fun��o verifica que os valores lidos pertencem ao intervale esperado para 
    )
 )
 
-(defun abertos-bfs (abertos sucessores)
- ;;Ordena abertos para o algoritmo bfs
-  (cond
-     ((null abertos)sucessores)
-     (T (append abertos sucessores))
-   )
+(defun ordenar-nos (lista) ;;--------------------------------------------------------------------TODO
+  "Ordena uma lista de nós por custo crescente"
+  (sort lista (no-maior (car lista) (cdr lista)))
 )
 
-(defun abertos-dfs (abertos sucessores)
- ;;Ordena abertos para o algoritmo dfs
-   (cond
-     ((null abertos)sucessores)
-     (T (append sucessores abertos))
-   )
+(defun ordenar-nos (lista)
+  "Ordena o no consoante o custo para ser usado na lista de abertos ordenada no algoritmo A* "
+  (sort (copy-seq lista) #'< :key #'no-custo)
+  )
+
+(defun no-maior (no1 no2)
+  "Retorna o nó com o menor custo"
+           (> (no-custo no1) (no-custo no2)))
+
+
+(defun heuristica (estado-n)
+  "Define a heuristica para utilizar"
+  (cond ((or (eq (car estado-n) 1) (eq (cadr estado-n) 1)) 0)
+    ((and (eq (car estado-n) (cadr estado-n)) (not (eq (car estado-n) 1))) 1)
+    (t '2)
+  )
+)
+
+(defun colocar-sucessores-em-abertos (nos-abertos sucessores-de-n) ;;----------------------------TODO
+  "A função retorna uma lista, resultante da junção de duas 
+  e da sua ordenação por ordem crescente, com base no valor do custo de cada nó"
+
+)
+
+(defun algoritmo-a* (no-inicial funcObj funcSuss operadores funcHeuristica) ;;-------------------TODO
+  "Procura recorrendo ao algoritmo A*"
+  (colocar-sucessores-em-abertos )
 )
 
 (defun no-existep(no list)
@@ -265,46 +283,6 @@ A fun��o verifica que os valores lidos pertencem ao intervale esperado para 
       ((funcall funObj (car list)) (car list))
       (T (no-obj (cdr list)funObj))
    )
-)
-
-;;; Algoritmos
-;; procura na largura
-;; teste: (bfs (no-teste) 'no-solucaop 'sucessores (operadores) nil nil)
-;; resultado: ((3 1) 1 ((2 2) 0 NIL))
-(defun bfs(no funObj funSuss operadores &optional abertos fechados)
-   (cond
-       ((and(null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
-       ((funcall funObj no) no)
-       ((null abertos)NIL)
-       (T
-          (let ((next-nos  (no-unicos (funcall funSuss (car abertos) operadores 'bfs) fechados)))
-               (cond 
-                   ((no-obj next-nos funObj) (no-obj next-nos funObj))
-                   (T (bfs no funObj funSuss operadores (abertos-bfs (cdr abertos) next-nos) (append fechados (list (car abertos)))))
-               )
-          )
-        )
-    )
-)
-
-
-;; procura na profundidade
-;; teste: (dfs (no-teste) 'no-solucaop 'sucessores (operadores) 10)
-;; resultado: ((3 1) 1 ((2 2) 0 NIL))
-(defun dfs(no funObj funSuss operadores maxProf &optional abertos fechados)
-   (cond
-       ((and(null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
-       ((funcall funObj no) no)
-       ((null abertos)NIL)
-       (T
-          (let ((next-nos  (no-unicos (funcall funSuss (car abertos) operadores 'dfs maxProf) fechados)))
-              (cond 
-                   ((no-obj next-nos funObj) (no-obj next-nos funObj))
-                   (T (dfs no funObj funSuss operadores maxProf (abertos-dfs (cdr abertos) next-nos) (append fechados (list (car abertos)))))
-               )
-          )
-        )
-    )
 )
 
 ;;; Inicializa��o do programa

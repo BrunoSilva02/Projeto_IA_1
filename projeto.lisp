@@ -72,16 +72,29 @@
     )
     (list problemas)   
     (close in))
-
-
-
     )
   )
-
 )
 
-  ; (print-ficheiro "problemas.dat")
+(defun get-file (filename)
+  (with-open-file (stream filename)
+    (loop for line = (read-line stream nil)
+          while line
+          collect line)))
 
+; (print-ficheiro "problemas.dat")
 (defun print-ficheiro (ficheiro)
-  (ler-ficheiro ficheiro)
+  (get-file ficheiro)
+)
+
+(defun transf-lista (ficheiro)
+  
+)
+
+(defun current-time()
+"Retorna o tempo actual com o formato (h m s)"
+  ;;HORAS-MINUTOS-SEGUNDOS
+  (multiple-value-bind (s m h) (get-decoded-time)
+    (list h m s)
+   )
 )
