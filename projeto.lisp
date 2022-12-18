@@ -55,3 +55,33 @@
             (T 'dfs)))
     )
   )
+
+
+ ; (ler-ficheiro "problemas.dat")
+
+(defun ler-ficheiro (ficheiro)
+(let ((in (open ficheiro :if-does-not-exist nil)))
+  (let (problemas 'PROB)
+
+  (when in
+    (loop for line = (read-line in nil)
+         while line do 
+          (cond ((string-equal line ",") (format t ""))
+          (T (append line problemas))
+          )
+    )
+    (list problemas)   
+    (close in))
+
+
+
+    )
+  )
+
+)
+
+  ; (print-ficheiro "problemas.dat")
+
+(defun print-ficheiro (ficheiro)
+  (ler-ficheiro ficheiro)
+)
