@@ -15,7 +15,7 @@
  (list 'arco-vertical 'arco-horizontal))
 
 ;;; Construtor
-(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 10))
+(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 2))
   "Cria um no representante do estado do problema"
   (list tabuleiro g h pai o)
 )
@@ -218,16 +218,16 @@
 ;; (trace bfs)
 ;; teste: (bfs (no-teste) 'no-solucaop 'sucessores-bfs (operadores) nil nil)
 ;; resultado: ! acabar sucessores primeiro ! (para testar)
+; sucessores-bfs (no funcs)
 (defun bfs(no funObj funSuss operadores &optional abertos fechados)
   "Define a função bfs que irá efetuar a procura em largura-primeiro"
    (cond
-       ((and(null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
+       ((and (null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
        ((null abertos) nil)
        ((funcall funObj (car abertos)) (car abertos))
-       (T 
-           (let ((next-nos (no-unicos (funcall funSuss (car abertos) operadores) fechados)))
-             (bfs no funObj funSuss operadores (abertos-bfs (cdr abertos) next-nos) (append fechados (list (car abertos))))
-           )
+       (T (bfs no funObj funSuss operadores 
+            (abertos-bfs (cdr abertos) (no-unicos (funcall funSuss (car abertos) operadores) fechados)) 
+            (append fechados (list (car abertos))))
         )
     )
 )
