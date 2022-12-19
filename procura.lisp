@@ -111,17 +111,17 @@
 
 ;;; Funcao geradora de nos
 ;;; gera todos os nos filho
-;; teste: (sucessores-dfs (no-teste) (operadores))
+;; teste: (sucessores-dfs (no-teste) (operadores) 5)
 ;; resultado: ??
 (defun sucessores-dfs (no funcs prof)
   (cond
-    ((= (get-profundidade no) maxProf) NIL)
+    ((>= (no-profundidade no) maxProf) NIL)
     (T (remove nil 
     (append-list 
       (mapcar (lambda (funcao)
-        (mapcar (lambda (coordenada)
-          (novo-sucessor no (first coordenada)(second coordenada) funcao))
-          (coordenadas-posiveis (no-estado no) funcao)
+        (mapcar (lambda (l-i)
+          (novo-sucessor no (first l-i)(second l-i) funcao))
+          (encontrar-l-i (no-estado no) funcao)
         ))funcs)
     )
     ))
