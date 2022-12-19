@@ -80,7 +80,7 @@
 
 ;;; Funcao auxiliar da geração de nos
 ;;; gera um novo nó
-;; teste: (novo-sucessor (no-teste) (car (operadores)) 1 1)
+;; teste: (novo-sucessor (no-teste) 1 1 (car (operadores)))
 ;; resultado: ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 1) (1 0 1) (0 1 1)) 1 9 --------------- nesta linha mostra "..(0 0 1)) (1 0 0).."
 ;;            ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1))) 0 99 NIL 10) 1)--- na consola, ESPERO ser bug visual
 (defun novo-sucessor(no l i func)
