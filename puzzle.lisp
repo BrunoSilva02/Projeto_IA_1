@@ -57,6 +57,7 @@
 			(substituir posicao (nth (- lista-arcos 1) lista) X))
 )
 
+; (arco-horizontal 1 1 (no-estado (no-teste)))
 (defun arco-horizontal (lista-arcos posicao tabuleiro &optional (X 1))
 
 	(if (or 
@@ -71,7 +72,8 @@
 				nil
 				(cons 
 					lista 
-					(get-arcos-verticais tabuleiro)
+					(cons
+					(get-arcos-verticais tabuleiro) ())
 				)
 			)
 		)
@@ -79,6 +81,7 @@
 
 )
 
+; (arco-vertical 1 1 (no-estado (no-teste)))
 (defun arco-vertical (lista-arcos posicao tabuleiro &optional (X 1))
 
 	(if (or 
@@ -93,7 +96,7 @@
 				nil
 				(cons 
 					(get-arcos-horizontais tabuleiro)
-					lista 
+					(cons lista ())
 				)
 			)
 		)
