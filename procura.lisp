@@ -3,6 +3,7 @@
 ;; Aurélio Miranda - 202000572
 ;; Bruno Silva - 202002258
 
+
 ;;*********************************** variaveis de teste e operadores ********************************************************************
 
 (defun no-teste ()
@@ -15,6 +16,7 @@
 
 ;;; Construtor
 (defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 10))
+  "Cria um no representante do estado do problema"
   (list tabuleiro g h pai o)
 )
 
@@ -23,6 +25,7 @@
 ;; teste: (no-estado (no-teste))
 ;; resultado: (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1)))
 (defun no-estado (no)
+  "Retorna o estado"
   (car no)
 )
 
@@ -80,7 +83,7 @@
 ;; teste: (novo-sucessor (no-teste) (car (operadores)) 1 1)
 ;; resultado: ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 1) (1 0 1) (0 1 1)) 1 9 --------------- nesta linha mostra "..(0 0 1)) (1 0 0).."
 ;;            ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1))) 0 99 NIL 10) 1)--- na consola, ESPERO ser bug visual
-(defun novo-sucessor(no func l i)
+(defun novo-sucessor(no l i func)
   (cond
     ((null (funcall func l i (no-estado no))) NIL)
     (t (cria-no (funcall func l i (no-estado no)) (+ (no-profundidade no) 1) 
@@ -91,14 +94,37 @@
 
 ;;; Funcao geradora de nos
 ;;; gera todos os nos filho
-;; teste: ? esta e dificil...
+;; teste: (sucessores-bfs (no-teste) (operadores))
 ;; resultado: ??
-(defun sucessores(no funcs alg &optional maxProf)
+(defun sucessores-bfs (no funcs)
+  (remove nil 
+    (append-list 
+      (mapcar (lambda (funcao) 
+        (mapcar (lambda (l-i) 
+          (novo-sucessor no (first l-i)(second l-i) funcao)
+          ) (encontrar-l-i (no-estado no))
+        )
+      )funcs)
+    )
+  )
+)
+
+;;; Funcao geradora de nos
+;;; gera todos os nos filho
+;; teste: (sucessores-dfs (no-teste) (operadores))
+;; resultado: ??
+(defun sucessores-dfs (no funcs prof)
   (cond
-     ((and (equal alg 'dfs)(equal (no-profundidade no) maxProf)) NIL)
-     (T 
-      (remove nil (mapcar  (lambda (fun) (novo-sucessor no fun)) funcs))
-      )
+    ((= (get-profundidade no) maxProf) NIL)
+    (T (remove nil 
+    (append-list 
+      (mapcar (lambda (funcao)
+        (mapcar (lambda (coordenada)
+          (novo-sucessor no (first coordenada)(second coordenada) funcao))
+          (coordenadas-posiveis (no-estado no) funcao)
+        ))funcs)
+    )
+    ))
    )
 )
 
@@ -158,23 +184,49 @@
 )
 
 
+
+;; -------------------------------------------------------------- Funções auxiliares ------------------------------------------------------
+
+
+;; (trace encontrar-l-i)
+;; teste - (encontrar-l-i (tabuleiro-problema-a))
+;; resultado - ((1 1) (1 2) (1 3) (2 1) (2 2) (2 3) (3 1) (3 2) (3 3) (4 1) (4 2) (4 3))
+;; teste - (encontrar-l-i (tabuleiro-problema-b))
+;; resultado - ((1 1) (1 2) (1 3) (1 4) (2 1) (2 2) (2 3) (2 4) (3 1) (3 2) (3 3) (3 4) (4 1) (4 2) (4 3) (4 4) (5 1) (5 2) (5 3) (5 4))
+(defun encontrar-l-i (tabuleiro &optional (l 1) (i 1))
+  "Encontra dos os l e i válidos para um dado tabuleiro"
+  (cond
+    ((< (length (get-arcos-verticais tabuleiro)) l) NIL)
+    ((< (length (get-arcos-horizontais tabuleiro)) (+ i 1)) 
+        (encontrar-l-i tabuleiro (+ l 1) 1))
+    (T (cons (list l i) (encontrar-l-i tabuleiro l (+ i 1))))
+  )
+)
+
+
+;; Junta o primeiro e o segundo elemento de uma lista num só elemento
+(defun append-list (list)
+  "Junta os 2 primeiros elementos de uma lista num só."
+  (append (first list) (second list))
+)
+
+
+
 ;; --------------------------------------------------------- Algoritmos ---------------------------------------------------------------------
 ;; procura na largura
-;; teste: (bfs (no-teste) 'no-solucaop 'sucessores (operadores) nil nil)
+;; (trace bfs)
+;; teste: (bfs (no-teste) 'no-solucaop 'sucessores-bfs (operadores) nil nil)
 ;; resultado: ! acabar sucessores primeiro ! (para testar)
 (defun bfs(no funObj funSuss operadores &optional abertos fechados)
-    "Defina a função bfs que irá efetuar a procura em largura-primeiro"
+  "Define a função bfs que irá efetuar a procura em largura-primeiro"
    (cond
        ((and(null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
+       ((null abertos) nil)
        ((funcall funObj (car abertos)) (car abertos))
-       ((null abertos)NIL)
-       (T
-          (let ((next-nos  (no-unicos (funcall funSuss (car abertos) operadores 'bfs) fechados)))
-               (cond 
-                   ((no-obj next-nos funObj) (no-obj next-nos funObj))
-                   (T (bfs no funObj funSuss operadores (abertos-bfs (cdr abertos) next-nos) (append fechados (list (car abertos)))))
-               )
-          )
+       (T 
+           (let ((next-nos (no-unicos (funcall funSuss (car abertos) operadores) fechados)))
+             (bfs no funObj funSuss operadores (abertos-bfs (cdr abertos) next-nos) (append fechados (list (car abertos))))
+           )
         )
     )
 )
@@ -201,7 +253,9 @@
 )
 
 
+
 ;; -------------------------------------------------------- Funções de leitura ---------------------------------------------------------------
+
 ;; Define funções de leitura para interação com utilizador
 ;; ler-profundidade
 (defun ler-profundidade()

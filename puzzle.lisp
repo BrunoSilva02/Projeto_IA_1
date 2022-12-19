@@ -166,10 +166,23 @@
          (algoritmo (ler-algoritmo))
          (profundidade (cond ((eql algoritmo 'dfs) (ler-profundidade)) (T 9999))) )
 	(cond
-		((equal algoritmo 'bfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores))))
+		((equal algoritmo 'bfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores-bfs (operadores))))
 		((equal algoritmo 'dfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores) profundidade)))
 	)
   )
 )
 
 
+#|
+(tabuleiro &optional (l 1) (i 1) melhor-pos val)
+
+if (l i = 1) {aumenta valor} 
+
+if (l+1 i = 1) {aumenta valor}
+
+if (i l = 1) {aumenta valor}
+
+if (i+1 l = 1) {aumenta valor}
+
+if (valor > val) {(tabuleiro &optional (l 1) (i 1) tabuleiro val)}
+ |#
