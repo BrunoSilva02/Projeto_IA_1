@@ -149,6 +149,17 @@
 	)
 )
 
+
+;; (escreve-no (no-teste))
+(defun escreve-no (no)
+ "Permite escrever no ecra um no do problema."
+  (progn
+     (format t "| Estado: ~a ~%" (no-estado no))
+     (format t "| Profundidade: ~a ~%" (no-profundidade no))
+     (format t "| Pai: ~a ~%" (no-pai no))
+  ))
+
+
 ;;cria-no (tabuleiro &optional (g 0) (h 0) (pai nil))
 (defun iniciar ()
   (let* ((no (cria-no (tabuleiro-problema-a)))

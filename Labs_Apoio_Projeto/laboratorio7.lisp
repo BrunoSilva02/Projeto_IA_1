@@ -31,11 +31,8 @@
 )
 
 (defun substituir (indice lista &optional (valor 1))
-	"Substitui numa lista um valor, na posição indica pelo indice"
 	(cond ((= indice 1) (cons valor (cdr lista)))
-		  ((= indice 2) (cons (car lista) (cons valor (cddr lista))))
-		  ((= indice 3) (cons (car lista) (cons (second lista)  (cons valor (cdddr lista)))))
-		  (T(cons (car lista) (cons (second lista) (cons (third lista) (cons valor ()))))))
+		(t (cons (car lista) (substituir (- indice 1) (cdr lista) valor))))
 )
 
 (defun arco-na-posicao (lista-arcos posicao lista &optional (X 1))

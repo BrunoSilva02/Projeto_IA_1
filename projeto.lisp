@@ -54,11 +54,10 @@
       (cond ((= resposta 1) 'bfs)
             (T 'dfs)))
     )
-  )
+)
 
 
- ; (ler-ficheiro "problemas.dat")
-
+; (ler-ficheiro "problemas.dat")
 (defun ler-ficheiro (ficheiro)
 (let ((in (open ficheiro :if-does-not-exist nil)))
   (let (problemas 'PROB)
@@ -80,15 +79,12 @@
   (with-open-file (stream filename)
     (loop for line = (read-line stream nil)
           while line
-          collect line)))
+          collect line))
+)
 
 ; (print-ficheiro "problemas.dat")
 (defun print-ficheiro (ficheiro)
   (get-file ficheiro)
-)
-
-(defun transf-lista (ficheiro)
-  
 )
 
 (defun current-time()
