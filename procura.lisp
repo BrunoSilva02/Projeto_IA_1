@@ -87,7 +87,7 @@
   (cond
     ((null (funcall func l i (no-estado no))) NIL)
     (t (cria-no (funcall func l i (no-estado no)) (+ (no-profundidade no) 1) 
-        (- (no-objetivo no) (contar-caixas-fechadas (no-estado no))) no (contar-caixas-fechadas (no-estado no)))
+        (- (no-objetivo no) (contar-caixas-fechadas (no-estado no))) no (no-objetivo no))
     )
   )
 )
