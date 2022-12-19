@@ -149,16 +149,40 @@
 	)
 )
 
+
+;; (escreve-no (no-teste))
+(defun escreve-no (no)
+ "Permite escrever no ecra um no do problema."
+  (progn
+     (format t "| Estado: ~a ~%" (no-estado no))
+     (format t "| Profundidade: ~a ~%" (no-profundidade no))
+     (format t "| Pai: ~a ~%" (no-pai no))
+  ))
+
+
 ;;cria-no (tabuleiro &optional (g 0) (h 0) (pai nil))
 (defun iniciar ()
   (let* ((no (cria-no (tabuleiro-problema-a)))
          (algoritmo (ler-algoritmo))
          (profundidade (cond ((eql algoritmo 'dfs) (ler-profundidade)) (T 9999))) )
 	(cond
-		((equal algoritmo 'bfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores))))
+		((equal algoritmo 'bfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores-bfs (operadores))))
 		((equal algoritmo 'dfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores) profundidade)))
 	)
   )
 )
 
 
+#|
+(tabuleiro &optional (l 1) (i 1) melhor-pos val)
+
+if (l i = 1) {aumenta valor} 
+
+if (l+1 i = 1) {aumenta valor}
+
+if (i l = 1) {aumenta valor}
+
+if (i+1 l = 1) {aumenta valor}
+
+if (valor > val) {(tabuleiro &optional (l 1) (i 1) tabuleiro val)}
+ |#
