@@ -19,8 +19,8 @@
     (format t "******************************* ~%")
     (format t "* Escolha: ~%")
     (let ((resposta (read)))
-      (cond ((eq resposta 1) (fn1))
-        ((eq resposta 2) (fn2))
+      (cond ((eq resposta 1) (selecionar-tabuleiro))
+        ((eq resposta 2) (funcao-ajuda))
         ((eq resposta 'e) (fn-exit))
         (t (fn-default))
       )
@@ -34,7 +34,7 @@
     (format t "Por favor insira uma opção válida. ~%"))
   (start))
 
-(defun fn1 ()
+(defun selecionar-tabuleiro ()
   (progn
     (format t "******************************* ~%")
     (format t "*     Dots and Boxes          * ~%")
@@ -52,39 +52,95 @@
     (format t "******************************* ~%")
     (format t "* Escolha: ~%")
     (let ((resposta (read)))
-      (cond ((eq resposta 1) (fn2 'a))
-        ((eq resposta 2) (fn2 'b))
-        ((eq resposta 3) (fn2 'c))
-        ((eq resposta 4) (fn2 'd))
-        ((eq resposta 5) (fn2 'e))
-        ((eq resposta 6) (fn2 'f))
+      (cond ((eq resposta 1) (ler-algoritmo (no-teste-a)))
+        ((eq resposta 2) (ler-algoritmo (no-teste-b)))
+        ((eq resposta 3) (ler-algoritmo (no-teste-c)))
+        ((eq resposta 4) (ler-algoritmo (no-teste-d)))
+        ((eq resposta 5) (ler-algoritmo (no-teste-e)))
+        ((eq resposta 6) (ler-algoritmo (no-teste-f)))
         (t (start))
       )
     )
   ))
 
-(defun fn2 (escolha)
-  (progn
-    (format t "Bem vindo ao tabuleiro ~s. ~%" escolha)))
-
 (defun fn-exit ()
   (progn
-    (format t "Adeus!")))
+    (format t "Adeus!"))
+)
 
 
-;; ler-algoritmo
-(defun ler-algoritmo (tabuleiro)
-"Permite fazer a leitura do algoritmo a utilizar."
-  (progn
-    (format t "Que algoritmo quer usar para procurar? ~%")
-    (format t "1- Procura na largura ~%")
-    (format t "2- Procura na profundidade ~%")
-    (let ((resposta (read)))
-      (cond ((= resposta 1) (iniciar 'bfs algoritmo))
-            (T (iniciar 'dfs))))
+;; -------------------------------------------------------- Funções de leitura ---------------------------------------------------------------
+
+;; Define funções de leitura para interação com utilizador
+;; teste: (ler-profundidade) User: 1
+;; resultado: 1
+;; teste: (ler-profundidade) User: a
+;; resultado: 99
+(defun ler-profundidade()
+"Permite fazer a leitura da profundidade limite (dfs)."
+    (progn
+    (format t "Qual a profundidade limite? ~%")
+    (let ((num (read)))
+      (cond ((numberp num) num)
+        (t 99)
+      )
+    )
     )
 )
 
+;; ler-algoritmo
+(defun ler-algoritmo (escolha)
+"Permite fazer a leitura do algoritmo a utilizar."
+  (progn
+    (format t "Que algoritmo quer usar para procurar? ~%~%")
+    (format t "1- Procura na largura ~%")
+    (format t "2- Procura na profundidade ~%")
+    (format t "3- Procura informada a* ~%")
+    (format t "Outra opção- Voltar ~%")
+    (let ((resposta (read)))
+      (cond ((= resposta 1) (resolver 'bfs escolha))
+            ((= resposta 2) (resolver 'dfs escolha))
+            ((= resposta 3) (ainda-nao-implementado 'ler-algoritmo escolha))
+            (T (selecionar-tabuleiro))))
+    )
+)
+
+(defun funcao-ajuda ()
+  (progn
+    (format t "              Dots and Boxes ~%")
+    (format t "   Esta aplicação foi desenvolvida com o intuito de ~%")
+    (format t "resolver tabuleiros (lxl) do jogo Dots and Boxes ~%")
+    (format t "   O jogo consiste em colocar arcos no tabuleiro de ~%")
+    (format t "forma a criar um quadrado, cada problema tem ~%")
+    (format t "um número pré-definido de caixas fechadas objetivo ~%")
+    (format t "que o utilizador tem de atingir com o menor número ~%")
+    (format t "de arcos possível. ~%")
+    (format t "   Com o recurso aos algoritmos a resolução de alguns~%")
+    (format t "problemas torna-se instantânea. ~%~%")
+    (format t "Escolha qualquer caractere ~%e em seguida Enter para voltar ao menu inicial. ~%")
+    (let ((resposta (read)))
+      (cond (T (start))))
+    )
+)
+
+(defun voltar ()
+  (progn
+    (format t "~%~%~%Deseja resolver mais algum tabuleiro? ~%~%")
+    (format t "1- Sim ~%")
+    (format t "Outra opção- Não ~%")
+    (let ((resposta (read)))
+      (cond ((eq resposta '1) (selecionar-tabuleiro))
+            (T (funcao-exit))))
+    )
+)
+
+(defun funcao-exit ()
+  (progn
+    (format t "Adeus! ~%")
+    )
+)
+
+;; ----------------------------------------------------- Funções de leitura de ficheiros -----------------------------------------------------
 
 ; (ler-ficheiro "problemas.dat")
 (defun ler-ficheiro (ficheiro)
@@ -136,4 +192,9 @@
     (sleep 1)
     (tempo-total temp (current-time))
   )
+)
+
+(defun ainda-nao-implementado (func &optional adicional)
+  (format t "Função ainda não implementada. ~%~%")
+  (funcall func adicional)
 )

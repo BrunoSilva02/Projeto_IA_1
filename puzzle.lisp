@@ -123,39 +123,7 @@
 		)
 	)
 )
-;;(trace contar-caixas-fechadas)
-;;(contar-caixas-fechadas (tabuleiro-problema-a)) 
-#|
-(defun contar-caixas-fechadas (tabuleiro &optional (l 1) (i 1))
-	(cond ((< (list-length (car (get-arcos-horizontais tabuleiro))) i) 0)
-		((< (list-length (get-arcos-horizontais tabuleiro)) l) 0)
-		((and
-			(and
-				(not (null (get-arco-na-posicao l i (get-arcos-verticais tabuleiro))))
-				(not (null (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro))))
-				(and 
-					(eq (get-arco-na-posicao l i (get-arcos-verticais tabuleiro)) '1)
-					(eq (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro)) '1)
-				)
-			)
-			(cond ((< (list-length (car (get-arcos-horizontais tabuleiro))) l) 0)
-				((< (list-length (get-arcos-horizontais tabuleiro)) i) 0)
-				((and
-					(not (null (get-arco-na-posicao l i (get-arcos-verticais tabuleiro))))
-					(not (null (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro))))
-					(and 
-						(eq (get-arco-na-posicao i l (get-arcos-horizontais tabuleiro)) '1)
-						(eq (get-arco-na-posicao (+ i 1) l (get-arcos-horizontais tabuleiro)) '1)
-					)
-				)
-				)
-			)
-		)
-		(+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 1))
-		(t (+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 0))
-	)
-)
-|#
+
 
 ;;(trace contar-caixas-fechadas)
 ;;(contar-caixas-fechadas (tabuleiro-problema-a)) 
@@ -174,25 +142,23 @@
 )
 
 
-;; (escreve-no (no-teste))
+;; (escreve-no (bfs (no-teste-b) 'no-solucaop 'sucessores-bfs (operadores) nil nil))
 (defun escreve-no (no)
  "Permite escrever no ecra um no do problema."
   (progn
      (format t "| Estado: ~a ~%" (no-estado no))
      (format t "| Profundidade: ~a ~%" (no-profundidade no))
      (format t "| Pai: ~a ~%" (no-pai no))
-  ))
-
-
-;;cria-no (tabuleiro &optional (g 0) (h 0) (pai nil))
-(defun iniciar (algoritmo tabuleiro)
-  (let* ((no (cria-no (tabuleiro-problema-a)))
-         (profundidade (cond ((eql algoritmo 'dfs) (ler-profundidade)) (T 9999))) )
-	(cond
-		((equal algoritmo 'bfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores-bfs (operadores))))
-		((equal algoritmo 'dfs) (escreve-no (funcall algoritmo no 'no-solucaop 'sucessores (operadores) profundidade)))
-	)
+	 (format t "| Caminho: ~a ~%" (caminho no))
   )
+  (voltar)
+  )
+
+
+;;(resolver 'bfs (no-teste-a))
+(defun resolver (algoritmo tabuleiro)
+    (cond ((equal algoritmo 'dfs) (escreve-no (dfs tabuleiro 'no-solucaop 'sucessores-dfs (operadores) (ler-profundidade)))) 
+		((equal algoritmo 'bfs) (escreve-no (bfs tabuleiro 'no-solucaop 'sucessores-bfs (operadores)))))
 )
 
 

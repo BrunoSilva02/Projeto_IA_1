@@ -26,7 +26,8 @@
  "Cria uma lista com todos os operadores do problema."
  (list 'arco-vertical 'arco-horizontal))
 
-;;; Construtor
+;;; Construtor (tabuleiro, profindidade, heuristica, pai e objetivo do tabuleiro)
+;; Objetivo -> número de caixas a fechar no tabuleiro
 (defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 5))
   "Cria um no representante do estado do problema"
   (list tabuleiro g h pai o)
@@ -211,6 +212,16 @@
   (append (first list) (second list))
 )
 
+;; teste: (caminho (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil))
+;; resultado: (((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
+;;  (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))))
+;; (((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))))
+(defun caminho (no)
+  "Devolve o caminho do nó inicial até ao resultado"
+  (cond ((null (no-pai no)) (no-estado no))
+    (t (append (caminho (no-pai no)) (no-estado no)))
+  )
+)
 
 
 ;; --------------------------------------------------------- Algoritmos ---------------------------------------------------------------------
@@ -280,32 +291,6 @@
       )
     )
 )
-
-
-;; -------------------------------------------------------- Funções de leitura ---------------------------------------------------------------
-
-;; Define funções de leitura para interação com utilizador
-;; ler-profundidade
-(defun ler-profundidade()
-"Permite fazer a leitura da profundidade limite (dfs)."
-    (progn
-    (format t "Qual a profundidade limite? ~%")
-    (read)
-    ))
-
-
-;; ler-algoritmo
-(defun ler-algoritmo ()
-"Permite fazer a leitura do algoritmo a utilizar."
-  (progn
-    (format t "Algoritmo a utilizar? ~%")
-    (format t "1- Breadth-First Search ~%")
-    (format t "2- Depth-First Search ~%")
-    (let ((resposta (read)))
-      (cond ((= resposta 1) 'bfs)
-            (T 'dfs)))
-    )
-  )
 
 
 ;; --------------------------------------------------------------- Misc & Tentativas ---------------------------------------------------------
@@ -501,3 +486,36 @@
 )
 
 
+;;(trace contar-caixas-fechadas)
+;;(contar-caixas-fechadas (tabuleiro-problema-a)) 
+#|
+(defun contar-caixas-fechadas (tabuleiro &optional (l 1) (i 1))
+	(cond ((< (list-length (car (get-arcos-horizontais tabuleiro))) i) 0)
+		((< (list-length (get-arcos-horizontais tabuleiro)) l) 0)
+		((and
+			(and
+				(not (null (get-arco-na-posicao l i (get-arcos-verticais tabuleiro))))
+				(not (null (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro))))
+				(and 
+					(eq (get-arco-na-posicao l i (get-arcos-verticais tabuleiro)) '1)
+					(eq (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro)) '1)
+				)
+			)
+			(cond ((< (list-length (car (get-arcos-horizontais tabuleiro))) l) 0)
+				((< (list-length (get-arcos-horizontais tabuleiro)) i) 0)
+				((and
+					(not (null (get-arco-na-posicao l i (get-arcos-verticais tabuleiro))))
+					(not (null (get-arco-na-posicao (+ l 1) i (get-arcos-verticais tabuleiro))))
+					(and 
+						(eq (get-arco-na-posicao i l (get-arcos-horizontais tabuleiro)) '1)
+						(eq (get-arco-na-posicao (+ i 1) l (get-arcos-horizontais tabuleiro)) '1)
+					)
+				)
+				)
+			)
+		)
+		(+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 1))
+		(t (+ (contar-caixas-fechadas tabuleiro (+ l 1) i)(contar-caixas-fechadas tabuleiro l (+ i 1)) 0))
+	)
+)
+|#
