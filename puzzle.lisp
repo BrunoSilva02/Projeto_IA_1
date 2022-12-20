@@ -50,6 +50,24 @@
 	)
 )
 
+
+(defun tabuleiro-problema-e ()
+  "Retorna um tabuleiro 5x5 (5 arcos na vertical por 5 arcos na horizontal)"
+	'(
+		((0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0))
+		((0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0))
+	)
+)
+
+
+(defun tabuleiro-problema-f ()
+  "Retorna um tabuleiro 5x5 (5 arcos na vertical por 5 arcos na horizontal)"
+	'(
+		((0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0))
+		((0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0))
+	)
+)
+
 ;;; Funções de manipulação
 
 (defun get-arcos-horizontais (tabuleiro)
@@ -156,16 +174,27 @@
      (format t "| Pai: ~a ~%" (no-pai (car no)))
 	 (format t "| Caminho: ~a ~%" (caminho (car no)))
   )
+  (escrever-ficheiro (list
+  	"| Estado: " (no-estado (car no))
+  	"| Profundidade: " (no-profundidade (car no))
+	"| Nós gerados: " (+ (cadr no) (caddr no))
+	"| Nós expandidos: " (caddr no)
+	"| Penetrância: " (/ (length (caminho (car no))) (+ (cadr no) (caddr no)))
+	"| Tempo demorado: " tempo
+	"| Pai: " (no-pai (car no))
+	"| Caminho: " (caminho (car no))
+  	))
   (voltar)
 )
 
 
 ;;(resolver 'bfs (no-teste-a))
 (defun resolver (algoritmo tabuleiro)
+	"Resolve um tabuleiro escolhido com o algoritmo designado"
 	(let ((inicio (get-universal-time)))
     (cond ((equal algoritmo 'dfs) (escreve-no (dfs tabuleiro 'no-solucaop 'sucessores-dfs (operadores) (ler-profundidade))
-			 (- inicio (get-universal-time)))) 
-		((equal algoritmo 'bfs) (escreve-no (bfs tabuleiro 'no-solucaop 'sucessores-bfs (operadores)) (- inicio (get-universal-time)))))
+			 (- (get-universal-time) inicio))) 
+		((equal algoritmo 'bfs) (escreve-no (bfs tabuleiro 'no-solucaop 'sucessores-bfs (operadores)) (- (get-universal-time) inicio))))
 	 )
 )
 
@@ -182,4 +211,4 @@ if (i l = 1) {aumenta valor}
 if (i+1 l = 1) {aumenta valor}
 
 if (valor > val) {(tabuleiro &optional (l 1) (i 1) tabuleiro val)}
- |#
+|#

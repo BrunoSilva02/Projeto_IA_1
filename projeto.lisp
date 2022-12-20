@@ -9,14 +9,15 @@
 ;; (start)
 (defun start ()
   (progn
-    (format t "~%~%******************************* ~%")
-    (format t "*                             * ~%")
-    (format t "*     Dots and Boxes          * ~%")
-    (format t "*                             * ~%")
-    (format t "*  Selecionar Tabuleiro (1)   * ~%")
-    (format t "*  Ajuda (2)                  * ~%")
-    (format t "*                             * ~%")
-    (format t "******************************* ~%")
+    (format t "~%~%******************************** ~%")
+    (format t "*                              * ~%")
+    (format t "*     Dots and Boxes           * ~%")
+    (format t "*                              * ~%")
+    (format t "*  Opt 1: Selecionar Tabuleiro * ~%")
+    (format t "*  Opt 2: Ajuda                * ~%")
+    (format t "*  Opt e: Sair                 * ~%")
+    (format t "*                              * ~%")
+    (format t "******************************** ~%")
     (format t "* Escolha: ~%")
     (let ((resposta (read)))
       (cond ((eq resposta 1) (selecionar-tabuleiro))
@@ -52,12 +53,13 @@
     (format t "******************************* ~%")
     (format t "* Escolha: ~%")
     (let ((resposta (read)))
-      (cond ((eq resposta 1) (ler-algoritmo (no-teste-a)))
+      (cond ((eq resposta 1) (ler-algoritmo (get-lista '1)))
         ((eq resposta 2) (ler-algoritmo (no-teste-b)))
         ((eq resposta 3) (ler-algoritmo (no-teste-c)))
         ((eq resposta 4) (ler-algoritmo (no-teste-d)))
         ((eq resposta 5) (ler-algoritmo (no-teste-e)))
         ((eq resposta 6) (ler-algoritmo (no-teste-f)))
+        ((eq resposta 7) (ler-algoritmo (get-lista '7)))
         (t (start))
       )
     )
@@ -98,9 +100,9 @@
     (format t "3- Procura informada a* ~%")
     (format t "Outra opção- Voltar ~%")
     (let ((resposta (read)))
-      (cond ((= resposta 1) (resolver 'bfs escolha))
-            ((= resposta 2) (resolver 'dfs escolha))
-            ((= resposta 3) (ainda-nao-implementado 'ler-algoritmo escolha))
+      (cond ((eq resposta '1) (resolver 'bfs escolha))
+            ((eq resposta '2) (resolver 'dfs escolha))
+            ((eq resposta '3) (ainda-nao-implementado 'ler-algoritmo escolha))
             (T (selecionar-tabuleiro))))
     )
 )
@@ -142,29 +144,42 @@
 
 ;; ----------------------------------------------------- Funções de leitura de ficheiros -----------------------------------------------------
 
-; (ler-ficheiro "problemas.dat")
-(defun ler-ficheiro (ficheiro)
-(let ((in (open ficheiro :if-does-not-exist nil)))
-  (let (problemas 'PROB)
-
-  (when in
-    (loop for line = (read-line in nil)
-         while line do 
-          (cond ((string-equal line ",") (format t ""))
-          (T (append line problemas))
-          )
-    )
-    (list problemas)   
-    (close in))
-    )
-  )
+;; (get-lista 1)
+(defun get-lista (indice)
+  "vai buscar a lista de valores de um tabuleiro ao ficheiro"
+  (cria-no (append (string-to-list (nth indice (ler-ficheiro)))
+     (string-to-list (nth (+ indice 1) (ler-ficheiro)))))
 )
 
-(defun get-file (filename)
-  (with-open-file (stream filename)
+;; converte uma string em lista
+(defun string-to-list (str)
+  "converte uma string em lista"
+   (do* ((stringstream (make-string-input-stream str))
+         (result nil (cons next result))
+         (next (read stringstream nil 'eos)
+               (read stringstream nil 'eos)))
+        ((equal next 'eos) (reverse result))))
+
+; (escrever-ficheiro (ler-ficheiro))
+; (ler-ficheiro)
+(defun ler-ficheiro ()
+  (with-open-file (stream "problemas.dat")
     (loop for line = (read-line stream nil)
           while line
-          collect line))
+          collect 
+          (string-trim '(#\Space #\Newline #\Backspace #\Tab #\Linefeed #\Page #\Return #\Rubout)
+            (substitute #\Space #\, line))
+          )))
+
+
+;; (escrever-ficheiro (escreve-no (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil) 2))
+;; (escrever-ficheiro (ler-ficheiro "problemas.dat"))
+(defun escrever-ficheiro (escrever)
+  (with-open-file (str "resultados.dat"
+                     :direction :output
+                     :if-exists :append
+                     :if-does-not-exist :create)
+  (format str "~a~%~%~%" escrever))
 )
 
 ; (print-ficheiro "problemas.dat")

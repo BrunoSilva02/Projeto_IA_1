@@ -28,7 +28,7 @@
 
 ;;; Construtor (tabuleiro, profindidade, heuristica, pai e objetivo do tabuleiro)
 ;; Objetivo -> número de caixas a fechar no tabuleiro
-(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 5))
+(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 3))
   "Cria um no representante do estado do problema"
   (list tabuleiro g h pai o)
 )
