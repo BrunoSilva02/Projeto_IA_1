@@ -142,23 +142,31 @@
 )
 
 
-;; (escreve-no (bfs (no-teste-b) 'no-solucaop 'sucessores-bfs (operadores) nil nil))
-(defun escreve-no (no)
+;; (escreve-no (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil) 2)
+;; (escreve-no (dfs (no-teste-a) 'no-solucaop 'sucessores-dfs (operadores) 5 nil nil) 2)
+(defun escreve-no (no tempo)
  "Permite escrever no ecra um no do problema."
   (progn
-     (format t "| Estado: ~a ~%" (no-estado no))
-     (format t "| Profundidade: ~a ~%" (no-profundidade no))
-     (format t "| Pai: ~a ~%" (no-pai no))
-	 (format t "| Caminho: ~a ~%" (caminho no))
+     (format t "~%~%| Estado: ~a ~%" (no-estado (car no)))
+     (format t "| Profundidade: ~a ~%" (no-profundidade (car no)))
+     (format t "| Nós gerados: ~a ~%" (+ (cadr no) (caddr no)))
+     (format t "| Nós expandidos: ~a ~%" (caddr no))
+	 (format t "| Penetrância: ~6f ~%" (/ (length (caminho (car no))) (+ (cadr no) (caddr no))))
+	 (format t "| Tempo demorado: ~as ~%" tempo)
+     (format t "| Pai: ~a ~%" (no-pai (car no)))
+	 (format t "| Caminho: ~a ~%" (caminho (car no)))
   )
   (voltar)
-  )
+)
 
 
 ;;(resolver 'bfs (no-teste-a))
 (defun resolver (algoritmo tabuleiro)
-    (cond ((equal algoritmo 'dfs) (escreve-no (dfs tabuleiro 'no-solucaop 'sucessores-dfs (operadores) (ler-profundidade)))) 
-		((equal algoritmo 'bfs) (escreve-no (bfs tabuleiro 'no-solucaop 'sucessores-bfs (operadores)))))
+	(let ((inicio (get-universal-time)))
+    (cond ((equal algoritmo 'dfs) (escreve-no (dfs tabuleiro 'no-solucaop 'sucessores-dfs (operadores) (ler-profundidade))
+			 (- inicio (get-universal-time)))) 
+		((equal algoritmo 'bfs) (escreve-no (bfs tabuleiro 'no-solucaop 'sucessores-bfs (operadores)) (- inicio (get-universal-time)))))
+	 )
 )
 
 

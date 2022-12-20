@@ -9,7 +9,7 @@
 ;; (start)
 (defun start ()
   (progn
-    (format t "******************************* ~%")
+    (format t "~%~%******************************* ~%")
     (format t "*                             * ~%")
     (format t "*     Dots and Boxes          * ~%")
     (format t "*                             * ~%")
@@ -36,7 +36,7 @@
 
 (defun selecionar-tabuleiro ()
   (progn
-    (format t "******************************* ~%")
+    (format t "~%~%******************************* ~%")
     (format t "*     Dots and Boxes          * ~%")
     (format t "*                             * ~%")
     (format t "*  Selecione um Tabuleiro     * ~%")
@@ -188,10 +188,9 @@
 )
 
 (defun teste ()
-  (let ((temp)) (current-time)
+    (format t "Função ainda não implementada. ~a~%" (get-universal-time))
     (sleep 1)
-    (tempo-total temp (current-time))
-  )
+    (get-universal-time)
 )
 
 (defun ainda-nao-implementado (func &optional adicional)

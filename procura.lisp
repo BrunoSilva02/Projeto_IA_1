@@ -80,10 +80,17 @@
    (t NIL))
 )
 
-;;; função que calcula a heuristica de um nó
+;;; função que calcula a heuristica de um nó (dada no enunciado)
 ;; teste: (heuristica (no-teste-a))
 ;; resultado: 9
 (defun heuristica (no)
+  (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
+)
+
+;;; função que calcula a heuristica de um nó (proposta pelos alunos)
+;; teste: (heuristica-proposta (no-teste-a))
+;; resultado: 9
+(defun heuristica-proposta (no)
   (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
 )
 
@@ -212,7 +219,7 @@
   (append (first list) (second list))
 )
 
-;; teste: (caminho (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil))
+;; teste: (caminho (car (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil)))
 ;; resultado: (((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
 ;;  (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))))
 ;; (((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))))
@@ -223,16 +230,34 @@
   )
 )
 
+(defun bf-sucessores-objetivo (lista-sucessores numero-caixas-fechadas) 
+    "Verifica na lista de sucessores se existe um com o número de caixas fechadas necessárias"
+
+    (cond
+        (
+             (= (list-length lista-sucessores) 0)
+             nil
+        ) 
+        (
+            (= (contar-caixas-fechadas (caar lista-sucessores)) numero-caixas-fechadas) 
+            (car lista-sucessores)
+        )
+        (
+            T 
+            (bf-sucessores-objetivo (cdr lista-sucessores) numero-caixas-fechadas)
+        )
+    )
+)
+
 
 ;; --------------------------------------------------------- Algoritmos ---------------------------------------------------------------------
 ;; Procura em largura
 ;; (trace bfs)
-;; teste: (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil)
-;; resultado: ((((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 2 1
+;; teste: (bfs (no-teste-b) 'no-solucaop 'sucessores-bfs (operadores) nil nil)
+;; resultado: (((((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 2 1
 ;; ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 1 2
 ;;  ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 0
-;;   NIL 3) 3) 3)
-; sucessores-bfs (no funcs)
+;;   NIL 3) 3) 3) 67 5)
 (defun bfs(no solucao sucessores operadores &optional abertos fechados)
   "Define a função bfs que irá efetuar a procura em largura-primeiro"
    (cond
@@ -240,7 +265,7 @@
           (bfs no solucao sucessores operadores (list no) fechados)) ; 1a iteração.
        ((null abertos) nil) ; Se ABERTOS vazia falha.
        ((funcall solucao (car abertos)) 
-          (car abertos)) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
+          (list (car abertos) (length abertos) (length fechados))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
        (T (bfs no solucao sucessores operadores 
             (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores) fechados)) 
             (append fechados (list (car abertos)))) ; Expande o nó n. Coloca os sucessores no fim de ABERTOS.
@@ -249,11 +274,11 @@
 )
 
 ;; procura na profundidade
-;; teste: (dfs (no-teste-c) 'no-solucaop 'sucessores-dfs (operadores) 5 nil nil)
-;; resultado: ((((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 2 1
+;; teste: (dfs (no-teste-a) 'no-solucaop 'sucessores-dfs (operadores) 5 nil nil)
+;; resultado: (((((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 2 1
 ;; ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 1 2
 ;;  ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 0
-;;   NIL 3)  3) 3)
+;;   NIL 3)  3) 3) 100 7)
 (defun dfs(no solucao sucessores operadores profundidade &optional abertos fechados)
     "Função dfs que irá efetuar a procura em profundidade-primeiro"
    (cond
@@ -262,8 +287,8 @@
        ((null abertos) nil) ; Se ABERTOS vazia falha
        ;((> (no-profundidade no) profundidade) nil) ; Se a profundidade de no é maior que profundidade não gera os sucessores
        (T (cond ((bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados) (no-objetivo no))
-             (bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados) 
-                  (no-objetivo no))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
+             (list (bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados) 
+                  (no-objetivo no)) (length abertos) (length fechados))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
             (t (dfs no solucao sucessores operadores profundidade                                              
             (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados)) 
             (append fechados (list (car abertos))))) ; Expande o nó n. Coloca os sucessores no início de ABERTOS.
@@ -284,8 +309,8 @@
        (T (cond ((bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores) fechados) (no-objetivo no))
              (bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores) fechados) 
                   (no-objetivo no))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
-            (t (dfs no solucao sucessores operadores profundidade                                              
-            (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados)) 
+            (t (a* no solucao sucessores operadores profundidade                                              
+            (abertos-a* (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados)) 
             (append fechados (list (car abertos))))) ; Expande o nó n. Coloca os sucessores no início de ABERTOS.
           )
       )
@@ -303,25 +328,6 @@
 ;; 4. N -> ADICIONAR EM LISTA FECHADOS
 ;; 5. EXPANDIR N -> SUCESSORES PARA LISTA ABERTOS
 ;; 6. SE SUCESSOR = OBJETIO, ACABAR SE NÃO, IR PARA 2.
-
-(defun bf-sucessores-objetivo (lista-sucessores numero-caixas-fechadas) 
-    "Verifica na lista de sucessores se existe um com o número de caixas fechadas necessárias"
-
-    (cond
-        (
-             (= (list-length lista-sucessores) 0)
-             nil
-        ) 
-        (
-            (= (contar-caixas-fechadas (caar lista-sucessores)) numero-caixas-fechadas) 
-            (car lista-sucessores)
-        )
-        (
-            T 
-            (bf-sucessores-objetivo (cdr lista-sucessores) numero-caixas-fechadas)
-        )
-    )
-)
 
 ;; (algoritmo-bf (no-teste-a) 3)
 (defun algoritmo-bf (estado-inicial numero-caixas-fechadas &optional (lista-abertos ()) (lista-fechados ()))
