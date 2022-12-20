@@ -34,7 +34,7 @@
 
 ;;; Metodos seletores
 ;; no-estado
-;; teste: (no-estado (no-teste))
+;; teste: (no-estado (no-teste-a))
 ;; resultado: (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1)))
 (defun no-estado (no)
   "Retorna o estado"
@@ -43,28 +43,28 @@
 
 
 ;; no-profundidade
-;; teste: (no-profundidade (no-teste))
+;; teste: (no-profundidade (no-teste-a))
 ;; resultado: 0
 (defun no-profundidade (no)
   (cadr no)
 )
 
 ;; no-heuristica
-;; teste: (no-heuristica (no-teste))
+;; teste: (no-heuristica (no-teste-a))
 ;; resultado: 999
 (defun no-heuristica (no)
   (caddr no)
 )
 
 ;; no-pai
-;; teste: (no-pai (no-teste))
+;; teste: (no-pai (no-teste-a))
 ;; resultado: NIL
 (defun no-pai (no)
   (cadddr no)
 )
 
 ;; no-objetivo
-;; teste: (no-objetivo (no-teste))
+;; teste: (no-objetivo (no-teste-a))
 ;; resultado: NIL
 (defun no-objetivo (no)
   (car(cddddr no))
@@ -72,7 +72,7 @@
 
 ;;; Funcoes auxiliares do no
 ;;; predicado no-solucaop que verifica se um estado e final
-;; teste: (no-solucaop (no-teste))
+;; teste: (no-solucaop (no-teste-a))
 ;; resultado: NIL
 (defun no-solucaop (no)
   (cond ((eq (contar-caixas-fechadas (no-estado no)) (no-objetivo no)) T)
@@ -80,7 +80,7 @@
 )
 
 ;;; função que calcula a heuristica de um nó
-;; teste: (heuristica (no-teste))
+;; teste: (heuristica (no-teste-a))
 ;; resultado: 9
 (defun heuristica (no)
   (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
@@ -89,7 +89,7 @@
 
 ;;; Funcao auxiliar da geração de nos
 ;;; gera um novo nó
-;; teste: (novo-sucessor (no-teste) 1 1 (car (operadores)))
+;; teste: (novo-sucessor (no-teste-a) 1 1 (car (operadores)))
 ;; resultado: ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 1) (1 0 1) (0 1 1))) 1 9
 ;;            ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1))) 0 99 NIL 10) 10)
 (defun novo-sucessor(no l i func)
@@ -124,11 +124,11 @@
 
 ;;; Funcao geradora de nos
 ;;; gera todos os nos filho
-;; teste: (sucessores-dfs (no-teste) (operadores) 5)
+;; teste: (sucessores-dfs (no-teste-a) (operadores) 5)
 ;; resultado: ??
 (defun sucessores-dfs (no funcs prof)
   (cond
-    ((>= (no-profundidade no) maxProf) NIL)
+    ((>= (no-profundidade no) prof) NIL)
     (T (remove nil 
         (append-list 
           (mapcar (lambda (funcao) 
@@ -185,19 +185,6 @@
    )
 )
 
-;; Devolve um no da lista caso seja o no objetivo
-;; teste: (desenvolver teste)
-;; resultado: -
-(defun no-obj (list solucao)
-  "Devolve NIL ou o no objetivo"
-  (cond
-      ((null list) NIL)
-      ((funcall solucao (car list)) (car list))
-      (T (no-obj (cdr list)solucao))
-   )
-)
-
-
 
 ;; -------------------------------------------------------------- Funções auxiliares ------------------------------------------------------
 
@@ -239,35 +226,60 @@
   "Define a função bfs que irá efetuar a procura em largura-primeiro"
    (cond
        ((and (null abertos)(null fechados)) 
-          (bfs no solucao sucessores operadores (list no) fechados))
-       ((null abertos) nil)
+          (bfs no solucao sucessores operadores (list no) fechados)) ; 1a iteração.
+       ((null abertos) nil) ; Se ABERTOS vazia falha.
        ((funcall solucao (car abertos)) 
-          (car abertos))
+          (car abertos)) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
        (T (bfs no solucao sucessores operadores 
             (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores) fechados)) 
-            (append fechados (list (car abertos))))
+            (append fechados (list (car abertos)))) ; Expande o nó n. Coloca os sucessores no fim de ABERTOS.
         )
     )
 )
 
 ;; procura na profundidade
-;; teste: (dfs (no-teste-a) 'no-solucaop 'sucessores-bfs 3 (operadores) nil nil)
-;; resultado: ! acabar sucessores primeiro ! (incompleto)
+;; teste: (dfs (no-teste-c) 'no-solucaop 'sucessores-dfs (operadores) 5 nil nil)
+;; resultado: ((((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 2 1
+;; ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 1 2
+;;  ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 0
+;;   NIL 3)  3) 3)
 (defun dfs(no solucao sucessores operadores profundidade &optional abertos fechados)
-    "Defina a função dfs que irá efetuar a procura em profundidade-primeiro"
+    "Função dfs que irá efetuar a procura em profundidade-primeiro"
    (cond
-      ((eq (no-profundidade no) profundidade) nil)
        ((and(null abertos)(null fechados)) 
-        (dfs no solucao sucessores operadores profundidade (list no) fechados))
-       ((funcall solucao no) no)
-       ((null abertos)NIL)
-       (T (dfs no solucao sucessores operadores profundidade 
-            (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores) fechados)) 
-            (append fechados (list (car abertos))))
+        (dfs no solucao sucessores operadores profundidade (list no) fechados)) ; 1a iteração
+       ((null abertos) nil) ; Se ABERTOS vazia falha
+       ;((> (no-profundidade no) profundidade) nil) ; Se a profundidade de no é maior que profundidade não gera os sucessores
+       (T (cond ((bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados) (no-objetivo no))
+             (bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados) 
+                  (no-objetivo no))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
+            (t (dfs no solucao sucessores operadores profundidade                                              
+            (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados)) 
+            (append fechados (list (car abertos))))) ; Expande o nó n. Coloca os sucessores no início de ABERTOS.
+          )
       )
     )
 )
 
+;; Procura informada a*
+;; teste: - (dfs (no-teste-c) 'no-solucaop 'sucessores-a* 'heuristica (operadores) nil nil)
+;; resultado: -
+(defun a*(no solucao sucessores heuristica operadores &optional abertos fechados)
+    "Função dfs que irá efetuar a procura em profundidade-primeiro"
+   (cond
+       ((and(null abertos)(null fechados)) 
+        (a* no solucao sucessores operadores profundidade (list no) fechados)) ; 1a iteração
+       ((null abertos) nil) ; Se ABERTOS vazia falha
+       (T (cond ((bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores) fechados) (no-objetivo no))
+             (bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores) fechados) 
+                  (no-objetivo no))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
+            (t (dfs no solucao sucessores operadores profundidade                                              
+            (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados)) 
+            (append fechados (list (car abertos))))) ; Expande o nó n. Coloca os sucessores no início de ABERTOS.
+          )
+      )
+    )
+)
 
 
 ;; -------------------------------------------------------- Funções de leitura ---------------------------------------------------------------
@@ -296,6 +308,8 @@
   )
 
 
+;; --------------------------------------------------------------- Misc & Tentativas ---------------------------------------------------------
+
   ;; BF
 
 ;; 1. NÓ INICIAL -> LISTA ABERTOS
@@ -315,7 +329,7 @@
         ) 
         (
             (= (contar-caixas-fechadas (caar lista-sucessores)) numero-caixas-fechadas) 
-            T
+            (car lista-sucessores)
         )
         (
             T 
@@ -324,7 +338,7 @@
     )
 )
 
-;; (algoritmo-bf (no-teste) 3)
+;; (algoritmo-bf (no-teste-a) 3)
 (defun algoritmo-bf (estado-inicial numero-caixas-fechadas &optional (lista-abertos ()) (lista-fechados ()))
 
     (cond 

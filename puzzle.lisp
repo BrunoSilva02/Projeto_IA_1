@@ -21,6 +21,11 @@
 	)
 )
 
+(defun tabuleiro-problema-a-resolvido ()
+  "Retorna o tabuleiro a resolvido para fins de teste"
+	'(((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1)))
+)
+
 (defun tabuleiro-problema-b ()
   "Retorna um tabuleiro 4x4 (4 arcos na vertical por 4 arcos na horizontal)"
 	'(
