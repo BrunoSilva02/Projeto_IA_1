@@ -6,16 +6,28 @@
 
 ;;*********************************** variaveis de teste e operadores ********************************************************************
 
-(defun no-teste ()
+(defun no-teste-a ()
 "Define um no teste do problema"
- (cria-no (tabuleiro-teste)))
+ (cria-no (tabuleiro-problema-a) 0 0 nil 3))
+
+ (defun no-teste-b ()
+"Define um no teste do problema"
+ (cria-no (tabuleiro-problema-b) 0 0 nil 7))
+
+ (defun no-teste-c ()
+"Define um no teste do problema"
+ (cria-no (tabuleiro-problema-c) 0 0 nil 10))
+
+ (defun no-teste-d ()
+"Define um no teste do problema"
+ (cria-no (tabuleiro-problema-d) 0 0 nil 10))
 
 (defun operadores ()
  "Cria uma lista com todos os operadores do problema."
  (list 'arco-vertical 'arco-horizontal))
 
 ;;; Construtor
-(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 2))
+(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 5))
   "Cria um no representante do estado do problema"
   (list tabuleiro g h pai o)
 )
@@ -63,7 +75,7 @@
 ;; teste: (no-solucaop (no-teste))
 ;; resultado: NIL
 (defun no-solucaop (no)
-  (cond ((eq (no-heuristica no) (no-objetivo no)) T)
+  (cond ((eq (contar-caixas-fechadas (no-estado no)) (no-objetivo no)) T)
    (t NIL))
 )
 
@@ -71,11 +83,7 @@
 ;; teste: (heuristica (no-teste))
 ;; resultado: 9
 (defun heuristica (no)
-  (cond ((and
-    	(no-objetivo no) (contar-caixas-fechadas (no-estado no)))
-      (- (no-objetivo no) (contar-caixas-fechadas (no-estado no))))
-      (t (no-heuristica no))
-  )
+  (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
 )
 
 
@@ -88,15 +96,19 @@
   (cond
     ((null (funcall func l i (no-estado no))) NIL)
     (t (cria-no (funcall func l i (no-estado no)) (+ (no-profundidade no) 1) 
-        (- (no-objetivo no) (contar-caixas-fechadas (no-estado no))) no (no-objetivo no))
+        (heuristica no) no (no-objetivo no))
     )
   )
 )
 
 ;;; Funcao geradora de nos
 ;;; gera todos os nos filho
-;; teste: (sucessores-bfs (no-teste) (operadores))
-;; resultado: ??
+;; teste: (sucessores-bfs (no-teste-a) (operadores))
+;; resultado: (((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 0) (0 0 1) (0 1 1))) 1 2
+;;  ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 0
+;;   NIL 3)
+;;  3)
+;; ((((0 0 0) ...
 (defun sucessores-bfs (no funcs)
   (remove nil 
     (append-list 
@@ -118,14 +130,15 @@
   (cond
     ((>= (no-profundidade no) maxProf) NIL)
     (T (remove nil 
-    (append-list 
-      (mapcar (lambda (funcao)
-        (mapcar (lambda (l-i)
-          (novo-sucessor no (first l-i)(second l-i) funcao))
-          (encontrar-l-i (no-estado no) funcao)
-        ))funcs)
-    )
-    ))
+        (append-list 
+          (mapcar (lambda (funcao) 
+            (mapcar (lambda (l-i) 
+              (novo-sucessor no (first l-i)(second l-i) funcao)
+              ) (encontrar-l-i (no-estado no))
+            )
+          )funcs)
+        )
+      ))
    )
 )
 
@@ -162,25 +175,25 @@
 ;; Devolve uma lista sem sucessores presentes nos nos fechados
 ;; teste: (desenvolver teste)
 ;; resultado: -
-(defun no-unicos (sucessores fechados)
+(defun no-diff (sucessores fechados)
    "Devolve apenas nos que sejam diferentes aos nos em fechados"
    (cond
        ((null sucessores) NIL)
        ((null fechados) sucessores)
-       ((no-existep (car sucessores) fechados) (no-unicos (cdr sucessores) fechados))
-       (T (cons (car sucessores) (no-unicos (cdr sucessores) fechados)))
+       ((no-existep (car sucessores) fechados) (no-diff (cdr sucessores) fechados))
+       (T (cons (car sucessores) (no-diff (cdr sucessores) fechados)))
    )
 )
 
 ;; Devolve um no da lista caso seja o no objetivo
 ;; teste: (desenvolver teste)
 ;; resultado: -
-(defun no-obj (list funObj)
+(defun no-obj (list solucao)
   "Devolve NIL ou o no objetivo"
   (cond
       ((null list) NIL)
-      ((funcall funObj (car list)) (car list))
-      (T (no-obj (cdr list)funObj))
+      ((funcall solucao (car list)) (car list))
+      (T (no-obj (cdr list)solucao))
    )
 )
 
@@ -214,42 +227,44 @@
 
 
 ;; --------------------------------------------------------- Algoritmos ---------------------------------------------------------------------
-;; procura na largura
+;; Procura em largura
 ;; (trace bfs)
-;; teste: (bfs (no-teste) 'no-solucaop 'sucessores-bfs (operadores) nil nil)
-;; resultado: ! acabar sucessores primeiro ! (para testar)
+;; teste: (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil)
+;; resultado: ((((0 0 0) (0 1 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 2 1
+;; ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 1 1) (0 1 1))) 1 2
+;;  ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 0
+;;   NIL 3) 3) 3)
 ; sucessores-bfs (no funcs)
-(defun bfs(no funObj funSuss operadores &optional abertos fechados)
+(defun bfs(no solucao sucessores operadores &optional abertos fechados)
   "Define a função bfs que irá efetuar a procura em largura-primeiro"
    (cond
-       ((and (null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
+       ((and (null abertos)(null fechados)) 
+          (bfs no solucao sucessores operadores (list no) fechados))
        ((null abertos) nil)
-       ((funcall funObj (car abertos)) (car abertos))
-       (T (bfs no funObj funSuss operadores 
-            (abertos-bfs (cdr abertos) (no-unicos (funcall funSuss (car abertos) operadores) fechados)) 
+       ((funcall solucao (car abertos)) 
+          (car abertos))
+       (T (bfs no solucao sucessores operadores 
+            (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores) fechados)) 
             (append fechados (list (car abertos))))
         )
     )
 )
 
-
 ;; procura na profundidade
-;; teste: (dfs (no-teste) 'no-solucaop 'sucessores (operadores) 10)
+;; teste: (dfs (no-teste-a) 'no-solucaop 'sucessores-bfs 3 (operadores) nil nil)
 ;; resultado: ! acabar sucessores primeiro ! (incompleto)
-(defun dfs(no funObj funSuss operadores maxProf &optional abertos fechados)
+(defun dfs(no solucao sucessores operadores profundidade &optional abertos fechados)
     "Defina a função dfs que irá efetuar a procura em profundidade-primeiro"
    (cond
-       ((and(null abertos)(null fechados)) (bfs no funObj funSuss operadores (list no) fechados))
-       ((funcall funObj no) no)
+      ((eq (no-profundidade no) profundidade) nil)
+       ((and(null abertos)(null fechados)) 
+        (dfs no solucao sucessores operadores profundidade (list no) fechados))
+       ((funcall solucao no) no)
        ((null abertos)NIL)
-       (T
-          (let ((next-nos  (no-unicos (funcall funSuss (car abertos) operadores 'dfs maxProf) fechados)))
-              (cond 
-                   ((no-obj next-nos funObj) (no-obj next-nos funObj))
-                   (T (dfs no funObj funSuss operadores maxProf (abertos-dfs (cdr abertos) next-nos) (append fechados (list (car abertos)))))
-               )
-          )
-        )
+       (T (dfs no solucao sucessores operadores profundidade 
+            (abertos-bfs (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores) fechados)) 
+            (append fechados (list (car abertos))))
+      )
     )
 )
 

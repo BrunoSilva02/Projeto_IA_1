@@ -29,6 +29,22 @@
 	)
 )
 
+(defun tabuleiro-problema-c ()
+  "Retorna um tabuleiro 5x5 (5 arcos na vertical por 5 arcos na horizontal)"
+	'(
+		((0 0 1 0) (1 0 1 1) (0 0 1 1) (0 0 1 1) (0 0 1 1))
+		((0 0 1 1) (0 0 1 1) (0 0 1 1) (1 0 1 1) (0 1 1 1))
+	)
+)
+
+(defun tabuleiro-problema-d ()
+  "Retorna um tabuleiro 5x5 (5 arcos na vertical por 5 arcos na horizontal)"
+	'(
+		((0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0))
+		((0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0) (0 0 0 0))
+	)
+)
+
 ;;; Funções de manipulação
 
 (defun get-arcos-horizontais (tabuleiro)
