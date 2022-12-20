@@ -3,79 +3,12 @@
 ;; Aurélio Miranda - 202000572
 ;; Bruno Silva - 202002258
 
-
-;;*********************************** variaveis de teste e operadores ********************************************************************
-
-(defun no-teste-a ()
-"Define um no teste do problema"
- (cria-no (tabuleiro-problema-a) 0 0 nil 3))
-
- (defun no-teste-b ()
-"Define um no teste do problema"
- (cria-no (tabuleiro-problema-b) 0 0 nil 7))
-
- (defun no-teste-c ()
-"Define um no teste do problema"
- (cria-no (tabuleiro-problema-c) 0 0 nil 10))
-
- (defun no-teste-d ()
-"Define um no teste do problema"
- (cria-no (tabuleiro-problema-d) 0 0 nil 10))
-
-(defun operadores ()
- "Cria uma lista com todos os operadores do problema."
- (list 'arco-vertical 'arco-horizontal))
-
-;;; Construtor (tabuleiro, profindidade, heuristica, pai e objetivo do tabuleiro)
-;; Objetivo -> número de caixas a fechar no tabuleiro
-(defun cria-no (tabuleiro &optional (g 0) (h 99) (pai nil) (o 3))
-  "Cria um no representante do estado do problema"
-  (list tabuleiro g h pai o)
-)
-
-;;; Metodos seletores
-;; no-estado
-;; teste: (no-estado (no-teste-a))
-;; resultado: (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1)))
-(defun no-estado (no)
-  "Retorna o estado"
-  (car no)
-)
-
-
-;; no-profundidade
-;; teste: (no-profundidade (no-teste-a))
-;; resultado: 0
-(defun no-profundidade (no)
-  (cadr no)
-)
-
-;; no-heuristica
-;; teste: (no-heuristica (no-teste-a))
-;; resultado: 999
-(defun no-heuristica (no)
-  (caddr no)
-)
-
-;; no-pai
-;; teste: (no-pai (no-teste-a))
-;; resultado: NIL
-(defun no-pai (no)
-  (cadddr no)
-)
-
-;; no-objetivo
-;; teste: (no-objetivo (no-teste-a))
-;; resultado: NIL
-(defun no-objetivo (no)
-  (car(cddddr no))
-)
-
 ;;; Funcoes auxiliares do no
 ;;; predicado no-solucaop que verifica se um estado e final
 ;; teste: (no-solucaop (no-teste-a))
 ;; resultado: NIL
 (defun no-solucaop (no)
+  "Verifica se o no é um no solucao"
   (cond ((eq (contar-caixas-fechadas (no-estado no)) (no-objetivo no)) T)
    (t NIL))
 )
@@ -84,6 +17,7 @@
 ;; teste: (heuristica (no-teste-a))
 ;; resultado: 9
 (defun heuristica (no)
+  "Calcula a heuristica de um no"
   (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
 )
 
@@ -91,6 +25,7 @@
 ;; teste: (heuristica-proposta (no-teste-a))
 ;; resultado: 9
 (defun heuristica-proposta (no)
+  "Calcula a heuristica proposta pelos alunos de um no"
   (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
 )
 
@@ -101,6 +36,7 @@
 ;; resultado: ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 1) (1 0 1) (0 1 1))) 1 9
 ;;            ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 1) (1 0 1) (0 1 1))) 0 99 NIL 10) 10)
 (defun novo-sucessor(no l i func)
+  "Gera um novo sucessor do no"
   (cond
     ((null (funcall func l i (no-estado no))) NIL)
     (t (cria-no (funcall func l i (no-estado no)) (+ (no-profundidade no) 1) 
@@ -118,6 +54,7 @@
 ;;  3)
 ;; ((((0 0 0) ...
 (defun sucessores-bfs (no funcs)
+  "Gera todos os sucessores do no, no contexto do algoritmo bfs"
   (remove nil 
     (append-list 
       (mapcar (lambda (funcao) 
@@ -133,8 +70,11 @@
 ;;; Funcao geradora de nos
 ;;; gera todos os nos filho
 ;; teste: (sucessores-dfs (no-teste-a) (operadores) 5)
-;; resultado: ??
+;; resultado: (((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 0) (0 0 1) (0 1 1))) 1 2
+;;  ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 0
+;;   NIL 3)  3) ...
 (defun sucessores-dfs (no funcs prof)
+  "Gera todos os sucessores do no, no contexto do algoritmo dfs"
   (cond
     ((>= (no-profundidade no) prof) NIL)
     (T (remove nil 
@@ -151,6 +91,7 @@
 )
 
 ;; Ordenação para Breadth-First Search
+;; (trace abertos-bfs)
 (defun abertos-bfs (abertos sucessores)
   "Ordenação para Breadth-First Search"
   (cond
@@ -160,6 +101,7 @@
 )
 
 ;; Ordenação para Depth-First Search
+;; (trace abertos-dfs)
 (defun abertos-dfs (abertos sucessores)
  "Ordenação para Depth-First Search"
    (cond
@@ -168,9 +110,8 @@
    )
 )
 
-;; Verificar Existência de um Nó
-;; teste: (desenvolver teste)
-;; resultado: -
+;; Verificar Existência de um no numa lista
+;; (trace no-existep)
 (defun no-existep(no lista &optional alg)
     "Verifica a existência de um Nó na lista"
     (cond
@@ -181,8 +122,7 @@
 )
 
 ;; Devolve uma lista sem sucessores presentes nos nos fechados
-;; teste: (desenvolver teste)
-;; resultado: -
+;; (trace no-diff)
 (defun no-diff (sucessores fechados)
    "Devolve apenas nos que sejam diferentes aos nos em fechados"
    (cond
@@ -230,6 +170,7 @@
   )
 )
 
+;; pesquisa se um no na lista de sucessores possui o numero de caixas desejado
 (defun bf-sucessores-objetivo (lista-sucessores numero-caixas-fechadas) 
     "Verifica na lista de sucessores se existe um com o número de caixas fechadas necessárias"
 
@@ -297,20 +238,20 @@
     )
 )
 
-;; Procura informada a*
-;; teste: - (dfs (no-teste-c) 'no-solucaop 'sucessores-a* 'heuristica (operadores) nil nil)
+;; Procura informada a* (INCOMPLETO)
+;; teste: - (a* (no-teste-c) 'no-solucaop 'sucessores-a* 'heuristica (operadores) nil nil)
 ;; resultado: -
-(defun a*(no solucao sucessores heuristica operadores &optional abertos fechados)
-    "Função dfs que irá efetuar a procura em profundidade-primeiro"
+(defun a*(no solucao sucessores heuristica-a operadores &optional abertos fechados)
+    "Função a* que irá efetuar a procura informada com um heuristica"
    (cond
        ((and(null abertos)(null fechados)) 
-        (a* no solucao sucessores operadores profundidade (list no) fechados)) ; 1a iteração
+        (a* no solucao sucessores operadores heuristica-a (list no) fechados)) ; 1a iteração
        ((null abertos) nil) ; Se ABERTOS vazia falha
        (T (cond ((bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores) fechados) (no-objetivo no))
              (bf-sucessores-objetivo (no-diff (funcall sucessores (car abertos) operadores) fechados) 
                   (no-objetivo no))) ; Se algum dos sucessores é um nó objectivo sai, e dá a solução.
-            (t (a* no solucao sucessores operadores profundidade                                              
-            (abertos-a* (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores profundidade) fechados)) 
+            (t (a* no solucao sucessores operadores heuristica-a
+            (abertos-a* (cdr abertos) (no-diff (funcall sucessores (car abertos) operadores heuristica-a) fechados)) 
             (append fechados (list (car abertos))))) ; Expande o nó n. Coloca os sucessores no início de ABERTOS.
           )
       )
@@ -319,6 +260,7 @@
 
 
 ;; --------------------------------------------------------------- Misc & Tentativas ---------------------------------------------------------
+;; Tentativas da realização de algumas funções
 
   ;; BF
 
@@ -525,3 +467,19 @@
 	)
 )
 |#
+
+
+#|
+(tabuleiro &optional (l 1) (i 1) melhor-pos val)
+
+if (l i = 1) {aumenta valor} 
+
+if (l+1 i = 1) {aumenta valor}
+
+if (i l = 1) {aumenta valor}
+
+if (i+1 l = 1) {aumenta valor}
+
+if (valor > val) {(tabuleiro &optional (l 1) (i 1) tabuleiro val)}
+|#
+

@@ -8,6 +8,7 @@
 ;; Este método começa o programa
 ;; (start)
 (defun start ()
+  "Menu principal do programa"
   (progn
     (format t "~%~%******************************** ~%")
     (format t "*                              * ~%")
@@ -28,14 +29,10 @@
     )
   )
 )
-    
 
-(defun fn-default ()
-  (progn
-    (format t "Por favor insira uma opção válida. ~%"))
-  (start))
 
 (defun selecionar-tabuleiro ()
+  "Menu de seleção de tabuleiro"
   (progn
     (format t "~%~%******************************* ~%")
     (format t "*     Dots and Boxes          * ~%")
@@ -65,49 +62,9 @@
     )
   ))
 
-(defun fn-exit ()
-  (progn
-    (format t "Adeus!"))
-)
-
-
-;; -------------------------------------------------------- Funções de leitura ---------------------------------------------------------------
-
-;; Define funções de leitura para interação com utilizador
-;; teste: (ler-profundidade) User: 1
-;; resultado: 1
-;; teste: (ler-profundidade) User: a
-;; resultado: 99
-(defun ler-profundidade()
-"Permite fazer a leitura da profundidade limite (dfs)."
-    (progn
-    (format t "Qual a profundidade limite? ~%")
-    (let ((num (read)))
-      (cond ((numberp num) num)
-        (t 99)
-      )
-    )
-    )
-)
-
-;; ler-algoritmo
-(defun ler-algoritmo (escolha)
-"Permite fazer a leitura do algoritmo a utilizar."
-  (progn
-    (format t "Que algoritmo quer usar para procurar? ~%~%")
-    (format t "1- Procura na largura ~%")
-    (format t "2- Procura na profundidade ~%")
-    (format t "3- Procura informada a* ~%")
-    (format t "Outra opção- Voltar ~%")
-    (let ((resposta (read)))
-      (cond ((eq resposta '1) (resolver 'bfs escolha))
-            ((eq resposta '2) (resolver 'dfs escolha))
-            ((eq resposta '3) (ainda-nao-implementado 'ler-algoritmo escolha))
-            (T (selecionar-tabuleiro))))
-    )
-)
 
 (defun funcao-ajuda ()
+  "Mostra informação sobre a aplicação"
   (progn
     (format t "              Dots and Boxes ~%")
     (format t "   Esta aplicação foi desenvolvida com o intuito de ~%")
@@ -125,44 +82,95 @@
     )
 )
 
-(defun voltar ()
+
+;; teste: (voltar '0)
+;; resultado: Não foi possível resolver o tabuleiro. (...)
+(defun voltar (res)
+  "Função utilizada par voltar a resolver um problema"
+  (cond ((eq res '0)
+    (format t "~%~%Não foi possível resolver o tabuleiro. ~%~%")
+  ))
   (progn
     (format t "~%~%~%Deseja resolver mais algum tabuleiro? ~%~%")
     (format t "1- Sim ~%")
     (format t "Outra opção- Não ~%")
     (let ((resposta (read)))
       (cond ((eq resposta '1) (selecionar-tabuleiro))
-            (T (funcao-exit))))
+            (T (fn-exit))))
     )
 )
 
-(defun funcao-exit ()
+
+;; -------------------------------------------------------- Funções de leitura ---------------------------------------------------------------
+;; Define funções de leitura para interação com utilizador
+
+
+;; teste: (ler-profundidade) User: 1
+;; resultado: 1
+;; teste: (ler-profundidade) User: a
+;; resultado: 99
+(defun ler-profundidade()
+"Permite fazer a leitura da profundidade limite (dfs)."
+    (progn
+    (format t "Qual a profundidade limite? ~%")
+    (let ((num (read)))
+      (cond ((numberp num) num)
+        (t 99)
+      )
+    )
+    )
+)
+
+
+;; (ler-algoritmo '1)
+(defun ler-algoritmo (escolha)
+"Permite fazer a leitura do algoritmo a utilizar."
   (progn
-    (format t "Adeus! ~%")
+    (format t "Que algoritmo quer usar para procurar? ~%~%")
+    (format t "1- Procura na largura ~%")
+    (format t "2- Procura na profundidade ~%")
+    (format t "3- Procura informada a* ~%")
+    (format t "Outra opção- Voltar ~%")
+    (let ((resposta (read)))
+      (cond ((eq resposta '1) (resolver 'bfs escolha))
+            ((eq resposta '2) (resolver 'dfs escolha))
+            ((eq resposta '3) (ainda-nao-implementado 'ler-algoritmo escolha))
+            (T (selecionar-tabuleiro))))
     )
 )
 
-;; ----------------------------------------------------- Funções de leitura de ficheiros -----------------------------------------------------
 
-;; (get-lista 1)
+;; ----------------------------------------------------- Funções de manipulação de ficheiros --------------------------------------------------
+;; Funções que escrevem e lêem em ficheiros
+
+
+;; (INCOMPLETA)
+;; teste: (get-lista 1)
+;; resultado: ((((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1))) 0 99 NIL 3)
+;; teste: (get-lista 2)
+;; resultado: erro...
 (defun get-lista (indice)
-  "vai buscar a lista de valores de um tabuleiro ao ficheiro"
+  "vai buscar a lista de valores de um tabuleiro ao ficheiro problemas.dat"
   (cria-no (append (string-to-list (nth indice (ler-ficheiro)))
      (string-to-list (nth (+ indice 1) (ler-ficheiro)))))
 )
 
+
 ;; converte uma string em lista
+;; (função retirada de https://www.csie.ntu.edu.tw/~course/10420/Resources/lp/node63.html)
 (defun string-to-list (str)
-  "converte uma string em lista"
+  "Converte uma string em lista"
    (do* ((stringstream (make-string-input-stream str))
          (result nil (cons next result))
          (next (read stringstream nil 'eos)
                (read stringstream nil 'eos)))
         ((equal next 'eos) (reverse result))))
+        
 
 ; (escrever-ficheiro (ler-ficheiro))
 ; (ler-ficheiro)
 (defun ler-ficheiro ()
+  "Le e filtra o ficheiro, retirando os espaços e as virgulas"
   (with-open-file (stream "problemas.dat")
     (loop for line = (read-line stream nil)
           while line
@@ -175,6 +183,7 @@
 ;; (escrever-ficheiro (escreve-no (bfs (no-teste-a) 'no-solucaop 'sucessores-bfs (operadores) nil nil) 2))
 ;; (escrever-ficheiro (ler-ficheiro "problemas.dat"))
 (defun escrever-ficheiro (escrever)
+  "Escreve informação no ficheiro resultados.dat"
   (with-open-file (str "resultados.dat"
                      :direction :output
                      :if-exists :append
@@ -182,33 +191,30 @@
   (format str "~a~%~%~%" escrever))
 )
 
-; (print-ficheiro "problemas.dat")
-(defun print-ficheiro (ficheiro)
-  (get-file ficheiro)
+
+;; ------------------------------------------------------------------ Misc ------------------------------------------------------------------
+;; Funções com utilizações variadas
+
+
+;; caso a escolha não seja válida
+(defun fn-default ()
+  "Filtra as escolhas para garantir que são sempre válidas"
+  (progn
+    (format t "Por favor insira uma opção válida. ~%"))
+  (start)
 )
 
-(defun current-time()
-"Retorna o tempo actual com o formato (h m s)"
-  ;;HORAS-MINUTOS-SEGUNDOS
-  (multiple-value-bind (s m h) (get-decoded-time)
-    (list h m s)
-   )
+
+;; função terminal
+(defun fn-exit ()
+  "Termina o programa"
+  (progn
+    (format t "Adeus!"))
 )
 
-(defun tempo-total (inicial final)
-"Retorna o tempo total com o formato (h m s)"
-  (list (- (car final) (car inicial))
-    (- (cadr final) (cadr inicial))
-    (- (caddr final) (caddr inicial)))
-)
-
-(defun teste ()
-    (format t "Função ainda não implementada. ~a~%" (get-universal-time))
-    (sleep 1)
-    (get-universal-time)
-)
 
 (defun ainda-nao-implementado (func &optional adicional)
+  "Serve para previnir a utilizaçao de funçoes ainda nao acabadas"
   (format t "Função ainda não implementada. ~%~%")
   (funcall func adicional)
 )
