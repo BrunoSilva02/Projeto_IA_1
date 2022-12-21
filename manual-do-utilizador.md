@@ -27,6 +27,8 @@
 > Quando aplicados ao mesmo tabuleiro diferentes algoritmos é possível observar que dependendo do tabuleiro um algoritmo pode ser melhor que o outro.  
 
 <br/><br/>
+<br/><br/>
+<br/><br/>
 
 ## Como se usa o programa 
 > Para a utilização do programa é necessário correr o mesmo num compilador lisp (para este projeto foi utilizado o vscode) e de seguida correr o commando que inicia o programa:
