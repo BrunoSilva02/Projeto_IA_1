@@ -41,11 +41,11 @@
 
 ## Exemplos de utilização 
 > No menu de seleção de tabuleiros selecionamos o tabuleiro A:  
-![](imagens/escolha-de-tabuleiro.jpg)  
+![](../imagens/escolha-de-tabuleiro.jpg)  
 > De seguida selecionamos o algoritmo:  
-![](imagens/escolha-de-algoritmos.jpg)  
+![](../imagens/escolha-de-algoritmos.jpg)  
 > Assim podemos observar o resultado abaixo:  
-![](imagens/resultados.jpg)  
+![](../imagens/resultados.jpg)  
 > Finalmente podemos verificar os resultados e escolher resolver outro tabuleiro ou sair do programa.
 
 <br/><br/>

@@ -23,10 +23,15 @@
 
 ;;; função que calcula a heuristica de um nó (proposta pelos alunos)
 ;; teste: (heuristica-proposta (no-teste-a))
-;; resultado: 9
+;; resultado: 2
+;; teste: (heuristica-proposta (no-teste-b))
+;; resultado: 7
+;; teste: (heuristica-proposta (no-teste-d))
+;; resultado: 0
 (defun heuristica-proposta (no)
   "Calcula a heuristica proposta pelos alunos de um no"
-  (- (no-objetivo no) (contar-caixas-fechadas (no-estado no)))
+  (+ (contar-caixas-quase-fechadas (no-estado no)) 
+    (contar-caixas-fechadas (no-estado no)))
 )
 
 
@@ -173,7 +178,6 @@
 ;; pesquisa se um no na lista de sucessores possui o numero de caixas desejado
 (defun bf-sucessores-objetivo (lista-sucessores numero-caixas-fechadas) 
     "Verifica na lista de sucessores se existe um com o número de caixas fechadas necessárias"
-
     (cond
         (
              (= (list-length lista-sucessores) 0)

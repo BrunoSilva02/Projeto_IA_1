@@ -96,6 +96,7 @@
 ;; teste: (substituir 1 (car (get-arcos-horizontais (tabuleiro-problema-a))))
 ;; resultado: (1 0 0)
 (defun substituir (indice lista &optional (valor 1))
+	"Coloca um arco na lista dada"
 	(cond ((= indice 1) (cons valor (cdr lista)))
 		(t (cons (car lista) (substituir (- indice 1) (cdr lista) valor))))
 )
@@ -111,7 +112,7 @@
 ;; teste: (arco-horizontal 1 1 (no-estado (no-teste-a)))
 ;; resultado: (((1 0 0) (0 0 1) (0 1 1) (0 0 1)) ((0 0 0) (0 1 0) (0 0 1) (0 1 1)))
 (defun arco-horizontal (lista-arcos posicao tabuleiro &optional (X 1))
-
+	"Coloca um arco horizontalmente numa dada posição e indice"
 	(if (or 
 			(> lista-arcos (length (car tabuleiro))) 
 			(> posicao (length (car tabuleiro)))
@@ -136,7 +137,7 @@
 ;; teste: (arco-vertical 1 1 (no-estado (no-teste-a)))
 ;; resultado: (((0 0 0) (0 0 1) (0 1 1) (0 0 1)) ((1 0 0) (0 1 0) (0 0 1) (0 1 1)))
 (defun arco-vertical (lista-arcos posicao tabuleiro &optional (X 1))
-
+	"Coloca um arco verticalmente numa dada posição e indice"
 	(if (or 
 			(> lista-arcos (length (car tabuleiro))) 
 			(> posicao (length (car tabuleiro)))
@@ -236,6 +237,7 @@
 ;; teste: (contar-caixas-fechadas (tabuleiro-problema-a)) 
 ;; resultado: 1
 (defun contar-caixas-fechadas (tabuleiro &optional (l 1) (i 1))
+	"Conta todas as caixas fechadas num tabuleiro"
 	(cond
 		((<= (length (get-arcos-horizontais tabuleiro)) l) 0)
 		((<= (length (get-arcos-verticais tabuleiro)) i) (contar-caixas-fechadas tabuleiro (+ l 1) 1))
@@ -246,6 +248,46 @@
 		) (+ (contar-caixas-fechadas tabuleiro l (+ i 1)) 1)
 		)
 		(t (contar-caixas-fechadas tabuleiro l (+ i 1)))
+	)
+)
+
+;; (trace contar-caixas-quase-fechadas)
+;; teste: (contar-caixas-quase-fechadas (tabuleiro-problema-a)) 
+;; resultado: 1
+;; teste: (contar-caixas-quase-fechadas (tabuleiro-problema-b)) 
+;; resultado: 2
+;; teste: (contar-caixas-quase-fechadas (tabuleiro-problema-d)) 
+;; resultado: 0
+(defun contar-caixas-quase-fechadas (tabuleiro &optional (l 1) (i 1))
+	"Conta todas as caixas que precisem de 1 arco para estarem fechadas"
+	(cond
+		((<= (length (get-arcos-horizontais tabuleiro)) l) 0)
+		((<= (length (get-arcos-verticais tabuleiro)) i) (contar-caixas-quase-fechadas tabuleiro (+ l 1) 1))
+		((and (eq (get-arco-na-posicao l i (get-arcos-horizontais tabuleiro)) '0)
+			(eq (get-arco-na-posicao (+ l 1) i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao i l (get-arcos-verticais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ i 1) l (get-arcos-verticais tabuleiro)) '1)
+		) (+ (contar-caixas-quase-fechadas tabuleiro l (+ i 1)) 1)
+		)
+		((and (eq (get-arco-na-posicao l i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ l 1) i (get-arcos-horizontais tabuleiro)) '0)
+			(eq (get-arco-na-posicao i l (get-arcos-verticais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ i 1) l (get-arcos-verticais tabuleiro)) '1)
+		) (+ (contar-caixas-quase-fechadas tabuleiro l (+ i 1)) 1)
+		)
+		((and (eq (get-arco-na-posicao l i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ l 1) i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao i l (get-arcos-verticais tabuleiro)) '0)
+			(eq (get-arco-na-posicao (+ i 1) l (get-arcos-verticais tabuleiro)) '1)
+		) (+ (contar-caixas-quase-fechadas tabuleiro l (+ i 1)) 1)
+		)
+		((and (eq (get-arco-na-posicao l i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ l 1) i (get-arcos-horizontais tabuleiro)) '1)
+			(eq (get-arco-na-posicao i l (get-arcos-verticais tabuleiro)) '1)
+			(eq (get-arco-na-posicao (+ i 1) l (get-arcos-verticais tabuleiro)) '0)
+		) (+ (contar-caixas-quase-fechadas tabuleiro l (+ i 1)) 1)
+		)
+		(t (contar-caixas-quase-fechadas tabuleiro l (+ i 1)))
 	)
 )
 

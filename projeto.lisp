@@ -110,7 +110,7 @@
 ;; teste: (ler-profundidade) User: a
 ;; resultado: 99
 (defun ler-profundidade()
-"Permite fazer a leitura da profundidade limite (dfs)."
+  "Permite fazer a leitura da profundidade limite (dfs)."
     (progn
     (format t "Qual a profundidade limite? ~%")
     (let ((num (read)))
@@ -124,7 +124,7 @@
 
 ;; (ler-algoritmo '1)
 (defun ler-algoritmo (escolha)
-"Permite fazer a leitura do algoritmo a utilizar."
+  "Permite fazer a leitura do algoritmo a utilizar."
   (progn
     (format t "Que algoritmo quer usar para procurar? ~%~%")
     (format t "1- Procura na largura ~%")
